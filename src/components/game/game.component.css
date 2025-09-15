@@ -688,3 +688,85 @@
     font-size: 1.2em;
   }
 }
+
+/* Fila para mazo y descarte */
+.deck-discard-row {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.deck-area, .discard-area {
+  flex: 1;
+  max-width: 150px;
+}
+
+/* Carta robada centrada debajo */
+.drawn-card-area {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.drawn-card-container {
+  display: flex;
+  justify-content: center;
+}
+
+/* Header de cartas del jugador con puntuación */
+.player-hand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.player-points {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #4CAF50;
+  background: rgba(76, 175, 80, 0.1);
+  padding: 5px 10px;
+  border-radius: 15px;
+  border: 2px solid #4CAF50;
+}
+
+/* Responsive para móvil */
+@media (max-width: 768px) {
+  .deck-discard-row {
+    gap: 15px;
+  }
+  
+  .deck-area, .discard-area {
+    max-width: 120px;
+  }
+  
+  .player-hand-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .player-points {
+    font-size: 1em;
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .deck-discard-row {
+    gap: 10px;
+  }
+  
+  .deck-area, .discard-area {
+    max-width: 100px;
+  }
+  
+  .deck-area h3, .discard-area h3 {
+    font-size: 0.9em;
+    margin: 5px 0;
+  }
+}
