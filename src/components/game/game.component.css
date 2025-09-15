@@ -1,58 +1,66 @@
 .game-container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px; /* Reducido para móvil */
   font-family: 'Arial', sans-serif;
   background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 50%, #fdcb6e 100%);
   min-height: 100vh;
   color: #8b4513;
+  /* Nuevo: Optimización para móvil */
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
 .game-title {
   color: #e17055;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 15px; /* Reducido */
   text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  font-size: 1.5rem; /* Tamaño fijo para móvil */
 }
 
 .player-info {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* Reducido */
 }
 
 .turn-indicator {
   background: linear-gradient(45deg, #f39c12, #fdcb6e);
   color: white;
-  padding: 15px;
+  padding: 10px 15px; /* Reducido */
   border-radius: 25px;
   text-align: center;
-  margin: 10px auto;
-  max-width: 300px;
+  margin: 5px auto; /* Reducido */
+  max-width: 280px; /* Reducido */
   box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
   animation: pulse 2s infinite;
+  font-size: 0.9rem;
 }
 
 .waiting {
   background: rgba(255, 234, 167, 0.3);
-  padding: 10px;
+  padding: 8px; /* Reducido */
   border-radius: 15px;
   text-align: center;
-  margin: 10px auto;
-  max-width: 300px;
+  margin: 5px auto; /* Reducido */
+  max-width: 280px; /* Reducido */
   color: #e17055;
+  font-size: 0.9rem;
 }
 
-/* Mesa de juego */
+/* Mesa de juego - Optimizada para móvil */
 .game-table {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin: 30px 0;
-  padding: 20px;
+  margin: 15px 0; /* Reducido */
+  padding: 15px; /* Reducido */
   background: rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 234, 167, 0.3);
+  flex-shrink: 0; /* Evita que se comprima */
 }
 
 /* Área del mazo */
@@ -153,14 +161,19 @@
   font-size: 14px;
 }
 
-/* Cartas del jugador - MEJORADAS */
+/* Cartas del jugador - MEJORADAS PARA MÓVIL */
 .cards-container {
   display: flex;
-  gap: 20px;
+  gap: 8px; /* Reducido para móvil */
   flex-wrap: wrap;
-  margin: 20px 0;
+  margin: 15px 0; /* Reducido */
   justify-content: center;
   perspective: 1000px;
+  /* Nuevo: Scroll horizontal en móvil */
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 5px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .card {
@@ -176,6 +189,8 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
   transform-style: preserve-3d;
+  /* Nuevo: Evita que las cartas se encojan */
+  flex-shrink: 0;
 }
 
 .player-card:hover {
@@ -234,36 +249,41 @@
   box-shadow: 0 0 30px rgba(243, 156, 18, 0.6);
 }
 
-/* Área de mano del jugador */
+/* Área de mano del jugador - Optimizada */
 .player-hand {
-  margin: 30px 0;
-  padding: 20px;
+  margin: 15px 0; /* Reducido */
+  padding: 15px; /* Reducido */
   border: 2px solid rgba(255, 234, 167, 0.5);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
+  flex-shrink: 0;
 }
 
-/* Botones de acción */
+/* Botones de acción - Optimizados */
 .game-actions {
   display: flex;
-  gap: 15px;
+  gap: 10px; /* Reducido */
   justify-content: center;
-  margin: 30px 0;
+  margin: 15px 0; /* Reducido */
   flex-wrap: wrap;
+  padding: 0 10px;
 }
 
 .action-btn {
-  padding: 15px 25px;
+  padding: 12px 20px; /* Reducido */
   border: none;
   border-radius: 25px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px; /* Reducido */
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(0,0,0,0.2);
   position: relative;
   overflow: hidden;
+  /* Nuevo: Mejor táctil */
+  min-height: 44px;
+  min-width: 100px;
 }
 
 .action-btn:before {
@@ -410,35 +430,185 @@
   pointer-events: none;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* NUEVAS MEDIA QUERIES ESPECÍFICAS PARA MÓVIL */
+
+/* Smartphones en portrait */
+@media (max-width: 480px) {
+  .game-container {
+    padding: 5px;
+    min-height: 100vh;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .game-title {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+  
+  .game-table {
+    flex-direction: column;
+    gap: 15px;
+    margin: 10px 0;
+    padding: 10px;
+  }
+  
+  .cards-container {
+    gap: 5px;
+    margin: 10px 0;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    padding: 5px;
+  }
+  
+  .card {
+    width: 70px;
+    height: 95px;
+    margin: 2px;
+  }
+  
+  .deck-card, .discard-card {
+    width: 70px;
+    height: 95px;
+  }
+  
+  .deck-stack, .discard-stack, .empty-discard {
+    width: 70px;
+    height: 95px;
+  }
+  
+  .action-btn {
+    padding: 10px 15px;
+    font-size: 12px;
+    min-height: 40px;
+    min-width: 80px;
+  }
+  
+  .game-actions {
+    gap: 8px;
+    margin: 10px 0;
+  }
+  
+  .player-hand {
+    margin: 10px 0;
+    padding: 10px;
+  }
+  
+  .drawn-card-area {
+    margin: 15px 0;
+    padding: 10px;
+  }
+  
+  .turn-indicator, .waiting {
+    padding: 8px 12px;
+    margin: 5px auto;
+    max-width: 250px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Smartphones en landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+  .game-container {
+    padding: 5px;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .game-table {
+    flex-direction: row;
+    gap: 10px;
+    margin: 5px 0;
+    padding: 8px;
+  }
+  
+  .cards-container {
+    gap: 6px;
+    margin: 8px 0;
+  }
+  
+  .card {
+    width: 60px;
+    height: 82px;
+  }
+  
+  .deck-card, .discard-card {
+    width: 60px;
+    height: 82px;
+  }
+  
+  .deck-stack, .discard-stack, .empty-discard {
+    width: 60px;
+    height: 82px;
+  }
+  
+  .game-title {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+  }
+  
+  .player-hand {
+    margin: 8px 0;
+    padding: 8px;
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
   .game-table {
     flex-direction: column;
     gap: 20px;
   }
   
   .cards-container {
-    gap: 15px;
+    gap: 12px;
   }
   
   .card {
-    width: 90px;
-    height: 125px;
+    width: 85px;
+    height: 115px;
   }
   
   .deck-card, .discard-card {
-    width: 90px;
-    height: 125px;
+    width: 85px;
+    height: 115px;
   }
   
   .deck-stack, .discard-stack, .empty-discard {
-    width: 90px;
-    height: 125px;
+    width: 85px;
+    height: 115px;
   }
   
   .action-btn {
-    padding: 12px 20px;
-    font-size: 14px;
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+}
+
+/* Mejoras adicionales para touch */
+@media (hover: none) and (pointer: coarse) {
+  .card:hover {
+    transform: none;
+  }
+  
+  .card:active {
+    transform: scale(0.95);
+  }
+  
+  .action-btn:hover {
+    transform: none;
+  }
+  
+  .action-btn:active {
+    transform: scale(0.95);
+  }
+  
+  .deck-card-3:hover {
+    transform: none;
+  }
+  
+  .deck-card-3:active {
+    transform: scale(0.95);
   }
 }
 

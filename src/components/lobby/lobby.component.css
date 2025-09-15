@@ -1,52 +1,58 @@
 .lobby-container {
   min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 50%, #fdcb6e 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Arial', sans-serif;
-  padding: 20px;
+  padding: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .welcome-section {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
-  padding: 40px;
+  padding: 25px;
   box-shadow: 0 20px 40px rgba(253, 203, 110, 0.3);
   max-width: 500px;
   width: 100%;
   text-align: center;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 234, 167, 0.5);
+  max-height: 95vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .romantic-header {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .hearts-decoration {
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .heart {
-  font-size: 24px;
-  margin: 0 10px;
+  font-size: 20px;
+  margin: 0 8px;
   animation: heartbeat 2s ease-in-out infinite;
 }
 
 .game-title {
-  font-size: 2.5em;
+  font-size: 2.2em;
   color: #e17055;
-  margin: 20px 0 10px 0;
+  margin: 15px 0 8px 0;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
   font-weight: bold;
 }
 
 .love-message {
-  font-size: 1.2em;
+  font-size: 1.1em;
   color: #f39c12;
   font-style: italic;
-  margin: 10px 0;
+  margin: 8px 0;
   font-weight: 500;
 }
 
@@ -55,16 +61,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  margin: 15px 0;
-  padding: 15px;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 12px;
   background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
   border-radius: 20px;
   box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
 }
 
 .heart-animation {
-  font-size: 1.5em;
+  font-size: 1.3em;
   animation: heartbeat 1.5s ease-in-out infinite;
 }
 
@@ -76,46 +82,49 @@
 }
 
 .days-number {
-  font-size: 1.8em;
+  font-size: 1.6em;
   color: #e91e63;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 .days-label {
-  font-size: 1.1em;
+  font-size: 1em;
   color: #ad1457;
   margin-left: 5px;
 }
 
 /* Estilos para selección de jugador */
 .player-selection {
-  margin: 30px 0;
+  margin: 20px 0;
 }
 
 .selection-title {
   color: #e17055;
-  font-size: 1.4em;
-  margin-bottom: 20px;
+  font-size: 1.3em;
+  margin-bottom: 15px;
   font-weight: bold;
 }
 
 .player-cards {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   justify-content: center;
-  margin: 20px 0;
+  margin: 15px 0;
+  flex-wrap: wrap;
 }
 
 .player-card {
   background: rgba(255, 255, 255, 0.9);
   border: 3px solid #ffeaa7;
   border-radius: 15px;
-  padding: 20px;
+  padding: 15px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
-  min-width: 120px;
+  min-width: 100px;
   box-shadow: 0 5px 15px rgba(253, 203, 110, 0.2);
+  flex: 1;
+  max-width: 140px;
 }
 
 .player-card:hover {
@@ -133,18 +142,18 @@
 }
 
 .player-emoji {
-  font-size: 3em;
-  margin-bottom: 10px;
+  font-size: 2.5em;
+  margin-bottom: 8px;
 }
 
 .player-name {
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: bold;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 
 .player-description {
-  font-size: 0.9em;
+  font-size: 0.8em;
   opacity: 0.8;
 }
 
@@ -153,11 +162,11 @@
 }
 
 .game-form {
-  margin: 30px 0;
+  margin: 20px 0;
 }
 
 .input-group {
-  margin: 20px 0;
+  margin: 15px 0;
   text-align: left;
 }
 
@@ -165,19 +174,20 @@
   display: block;
   color: #e17055;
   font-weight: bold;
-  margin-bottom: 8px;
-  font-size: 1.1em;
+  margin-bottom: 6px;
+  font-size: 1em;
 }
 
 .romantic-input {
   width: 100%;
-  padding: 15px 20px;
+  padding: 12px 18px;
   border: 2px solid #ffeaa7;
   border-radius: 25px;
-  font-size: 16px;
+  font-size: 15px;
   background: rgba(255, 234, 167, 0.2);
   transition: all 0.3s ease;
   box-sizing: border-box;
+  min-height: 44px;
 }
 
 .romantic-input:focus {
@@ -193,33 +203,35 @@
 }
 
 .actions-section {
-  margin: 30px 0;
+  margin: 20px 0;
 }
 
 .create-room, .join-room {
-  margin: 25px 0;
+  margin: 20px 0;
 }
 
 .create-room h3, .join-room h3 {
   color: #e17055;
-  margin-bottom: 15px;
-  font-size: 1.3em;
+  margin-bottom: 12px;
+  font-size: 1.2em;
 }
 
 .btn-create, .btn-join {
   background: linear-gradient(45deg, #f39c12, #fdcb6e);
   color: white;
   border: none;
-  padding: 15px 30px;
+  padding: 12px 25px;
   border-radius: 25px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 100px;
 }
 
 .btn-create:hover, .btn-join:hover {
@@ -237,7 +249,7 @@
 }
 
 .divider {
-  margin: 30px 0;
+  margin: 20px 0;
   position: relative;
 }
 
@@ -276,25 +288,25 @@
 }
 
 .footer {
-  margin-top: 30px;
+  margin-top: 20px;
   color: #e17055;
   font-weight: 500;
 }
 
 .footer p {
-  margin: 10px 0;
-  font-size: 1.1em;
+  margin: 8px 0;
+  font-size: 1em;
 }
 
 .floating-hearts {
-  margin-top: 20px;
+  margin-top: 15px;
   position: relative;
-  height: 40px;
+  height: 30px;
 }
 
 .floating-heart {
   position: absolute;
-  font-size: 20px;
+  font-size: 18px;
   animation: float 3s ease-in-out infinite;
 }
 
@@ -339,6 +351,257 @@
   50% {
     transform: translateY(-10px);
     opacity: 1;
+  }
+}
+
+/* NUEVAS MEDIA QUERIES ESPECÍFICAS PARA MÓVIL */
+
+/* Smartphones en portrait */
+@media (max-width: 480px) {
+  .lobby-container {
+    padding: 5px;
+    height: 100vh;
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+  
+  .welcome-section {
+    padding: 15px;
+    margin: 0;
+    border-radius: 15px;
+    max-height: 98vh;
+    width: calc(100% - 10px);
+  }
+  
+  .game-title {
+    font-size: 1.8em;
+    margin: 10px 0 5px 0;
+  }
+  
+  .love-message {
+    font-size: 0.9em;
+    margin: 5px 0;
+  }
+  
+  .player-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+  }
+  
+  .player-card {
+    width: 100%;
+    max-width: 200px;
+    padding: 12px;
+    min-width: auto;
+  }
+  
+  .player-emoji {
+    font-size: 2em;
+    margin-bottom: 5px;
+  }
+  
+  .player-name {
+    font-size: 1em;
+    margin-bottom: 3px;
+  }
+  
+  .player-description {
+    font-size: 0.75em;
+  }
+  
+  .selection-title {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  
+  .create-room h3, .join-room h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+  
+  .btn-create, .btn-join {
+    padding: 10px 20px;
+    font-size: 14px;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .join-room .input-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .romantic-input {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .divider {
+    margin: 15px 0;
+  }
+  
+  .actions-section {
+    margin: 15px 0;
+  }
+  
+  .create-room, .join-room {
+    margin: 15px 0;
+  }
+  
+  .footer {
+    margin-top: 15px;
+  }
+  
+  .footer p {
+    font-size: 0.9em;
+    margin: 5px 0;
+  }
+  
+  .floating-hearts {
+    height: 25px;
+    margin-top: 10px;
+  }
+  
+  .floating-heart {
+    font-size: 16px;
+  }
+  
+  .days-counter {
+    padding: 8px;
+    margin: 8px 0;
+    gap: 6px;
+  }
+  
+  .days-number {
+    font-size: 1.4em;
+  }
+  
+  .days-label {
+    font-size: 0.9em;
+  }
+  
+  .heart-animation {
+    font-size: 1.1em;
+  }
+}
+
+/* Smartphones en landscape */
+@media (max-width: 768px) and (orientation: landscape) {
+  .lobby-container {
+    padding: 5px;
+    height: 100vh;
+    align-items: flex-start;
+    padding-top: 5px;
+  }
+  
+  .welcome-section {
+    padding: 10px 15px;
+    max-height: 98vh;
+    overflow-y: auto;
+  }
+  
+  .game-title {
+    font-size: 1.6em;
+    margin: 5px 0;
+  }
+  
+  .player-cards {
+    flex-direction: row;
+    gap: 8px;
+    margin: 8px 0;
+  }
+  
+  .player-card {
+    padding: 8px;
+    min-width: 80px;
+  }
+  
+  .player-emoji {
+    font-size: 1.8em;
+    margin-bottom: 3px;
+  }
+  
+  .actions-section {
+    margin: 10px 0;
+  }
+  
+  .create-room, .join-room {
+    margin: 10px 0;
+  }
+  
+  .floating-hearts {
+    display: none;
+  }
+}
+
+/* Tablets */
+@media (min-width: 481px) and (max-width: 768px) {
+  .welcome-section {
+    padding: 20px;
+    max-width: 400px;
+  }
+  
+  .game-title {
+    font-size: 2em;
+  }
+  
+  .player-cards {
+    gap: 12px;
+  }
+  
+  .player-card {
+    min-width: 110px;
+    padding: 12px;
+  }
+}
+
+/* Mejoras adicionales para touch */
+@media (hover: none) and (pointer: coarse) {
+  .player-card:hover {
+    transform: none;
+  }
+  
+  .player-card:active {
+    transform: scale(0.98);
+  }
+  
+  .btn-create:hover, .btn-join:hover {
+    transform: none;
+  }
+  
+  .btn-create:active, .btn-join:active {
+    transform: scale(0.98);
+  }
+  
+  .days-counter-minimal:hover {
+    transform: none;
+  }
+}
+
+/* Optimización adicional para pantallas muy pequeñas */
+@media (max-width: 360px) {
+  .welcome-section {
+    padding: 10px;
+  }
+  
+  .game-title {
+    font-size: 1.6em;
+  }
+  
+  .player-card {
+    max-width: 180px;
+  }
+  
+  .romantic-input {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  
+  .btn-create, .btn-join {
+    font-size: 13px;
+    padding: 8px 16px;
   }
 }
 
