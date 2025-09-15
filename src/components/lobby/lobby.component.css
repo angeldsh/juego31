@@ -1,0 +1,427 @@
+.lobby-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 50%, #fdcb6e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+}
+
+.welcome-section {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(253, 203, 110, 0.3);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 234, 167, 0.5);
+}
+
+.romantic-header {
+  margin-bottom: 30px;
+}
+
+.hearts-decoration {
+  margin: 10px 0;
+}
+
+.heart {
+  font-size: 24px;
+  margin: 0 10px;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+.game-title {
+  font-size: 2.5em;
+  color: #e17055;
+  margin: 20px 0 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+}
+
+.love-message {
+  font-size: 1.2em;
+  color: #f39c12;
+  font-style: italic;
+  margin: 10px 0;
+  font-weight: 500;
+}
+
+/* Estilos para el contador de días */
+.days-counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+}
+
+.heart-animation {
+  font-size: 1.5em;
+  animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+.days-text {
+  margin: 0;
+  text-align: center;
+  color: #d63384;
+  font-weight: bold;
+}
+
+.days-number {
+  font-size: 1.8em;
+  color: #e91e63;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.days-label {
+  font-size: 1.1em;
+  color: #ad1457;
+  margin-left: 5px;
+}
+
+/* Estilos para selección de jugador */
+.player-selection {
+  margin: 30px 0;
+}
+
+.selection-title {
+  color: #e17055;
+  font-size: 1.4em;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.player-cards {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.player-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #ffeaa7;
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 5px 15px rgba(253, 203, 110, 0.2);
+}
+
+.player-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(253, 203, 110, 0.4);
+  border-color: #f39c12;
+}
+
+.player-card.selected {
+  background: linear-gradient(135deg, #f39c12, #fdcb6e);
+  border-color: #e67e22;
+  color: white;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(243, 156, 18, 0.5);
+}
+
+.player-emoji {
+  font-size: 3em;
+  margin-bottom: 10px;
+}
+
+.player-name {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.player-description {
+  font-size: 0.9em;
+  opacity: 0.8;
+}
+
+.player-card.selected .player-description {
+  opacity: 0.9;
+}
+
+.game-form {
+  margin: 30px 0;
+}
+
+.input-group {
+  margin: 20px 0;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  color: #e17055;
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 1.1em;
+}
+
+.romantic-input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #ffeaa7;
+  border-radius: 25px;
+  font-size: 16px;
+  background: rgba(255, 234, 167, 0.2);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.romantic-input:focus {
+  outline: none;
+  border-color: #f39c12;
+  box-shadow: 0 0 15px rgba(243, 156, 18, 0.4);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.romantic-input::placeholder {
+  color: #e17055;
+  opacity: 0.7;
+}
+
+.actions-section {
+  margin: 30px 0;
+}
+
+.create-room, .join-room {
+  margin: 25px 0;
+}
+
+.create-room h3, .join-room h3 {
+  color: #e17055;
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.btn-create, .btn-join {
+  background: linear-gradient(45deg, #f39c12, #fdcb6e);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-create:hover, .btn-join:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
+  background: linear-gradient(45deg, #e67e22, #f1c40f);
+}
+
+.btn-create:active, .btn-join:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 18px;
+}
+
+.divider {
+  margin: 30px 0;
+  position: relative;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #ffeaa7, transparent);
+}
+
+.divider span {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0 20px;
+  color: #e17055;
+  font-weight: bold;
+  position: relative;
+  z-index: 1;
+}
+
+.join-room .input-group {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.join-room .romantic-input {
+  flex: 1;
+}
+
+.join-room .btn-join {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.footer {
+  margin-top: 30px;
+  color: #e17055;
+  font-weight: 500;
+}
+
+.footer p {
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+.floating-hearts {
+  margin-top: 20px;
+  position: relative;
+  height: 40px;
+}
+
+.floating-heart {
+  position: absolute;
+  font-size: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.floating-heart:nth-child(1) {
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-heart:nth-child(2) {
+  left: 30%;
+  animation-delay: 0.5s;
+}
+
+.floating-heart:nth-child(3) {
+  left: 60%;
+  animation-delay: 1s;
+}
+
+.floating-heart:nth-child(4) {
+  left: 80%;
+  animation-delay: 1.5s;
+}
+
+/* Animaciones */
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .lobby-container {
+    padding: 10px;
+  }
+  
+  .welcome-section {
+    padding: 30px 20px;
+  }
+  
+  .game-title {
+    font-size: 2em;
+  }
+  
+  .player-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .player-card {
+    width: 200px;
+  }
+  
+  .join-room .input-group {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .join-room .btn-join {
+    width: 100%;
+  }
+}
+
+/* Contador minimalista con tonos amarillos claros */
+.days-counter-minimal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #fff9c4 0%, #fff3a0 100%);
+  border: 1px solid #f9e79f;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(249, 231, 159, 0.2);
+  transition: all 0.3s ease;
+}
+
+.days-counter-minimal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249, 231, 159, 0.3);
+}
+
+.heart-simple {
+  font-size: 1.2em;
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.days-text-minimal {
+  font-size: 0.95em;
+  color: #b7950b;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-shadow: none;
+}
+
+/* Opcional: Si quieres que el número se destaque un poco más */
+.days-text-minimal::first-letter {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #a6860b;
+}

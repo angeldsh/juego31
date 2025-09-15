@@ -1,0 +1,133 @@
+<div class="game-container" *ngIf="room">
+  <h2>Juego 31 - Sala: {{roomCode}}</h2>
+  
+  <!-- Información del jugador -->
+  <div class="player-info">
+    <h3>{{playerName}} ({{calculateHandPoints()}} puntos)</h3>
+    <p *ngIf="isYourTurn" class="turn-indicator">🎯 Es tu turno</p>
+    <p *ngIf="!isYourTurn" class="waiting">⏳ Esperando turno...</p>
+  </div>
+
+  <!-- Mesa de juego -->
+  <div class="game-table">
+    <!-- Mazo boca abajo -->
+    <div class="deck-area">
+      <h3>Mazo</h3>
+      <div class="deck-stack">
+        <div class="deck-card deck-card-1"></div>
+        <div class="deck-card deck-card-2"></div>
+        <div class="deck-card deck-card-3" 
+             [class.deck-drawing]="isDrawingFromDeck"
+             (click)="drawFromDeck()">
+          <img src="/assets/cards/RV.png" alt="Mazo" class="card-image">
+        </div>
+      </div>
+      <p class="deck-count">{{getDeckCount()}} cartas</p>
+    </div>
+
+    <!-- Pila de descarte -->
+    <div class="discard-area">
+      <h3>Descarte</h3>
+      <div class="discard-stack" *ngIf="room.discardPile && room.discardPile.length > 0">
+        <div *ngFor="let card of room.discardPile.slice(-1)" 
+             class="card discard-card"
+             [class.discard-glow]="canDrawFromDiscard()"
+             (click)="drawFromDiscard()">
+          <img [src]="getCardImagePath(card)" 
+               [alt]="getCardDisplayName(card)"
+               class="card-image"
+               (error)="onImageError($event, card)">
+        </div>
+      </div>
+      <div class="empty-discard" *ngIf="!room.discardPile || room.discardPile.length === 0">
+        <div class="empty-pile">Vacío</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cartas del jugador -->
+  <div class="player-hand">
+    <h3>Tus cartas:</h3>
+    <div class="cards-container">
+      <div *ngFor="let card of playerCards; let i = index" 
+           class="card player-card" 
+           [class.selected]="selectedCardIndex === i"
+           [class.card-entering]="cardAnimations[i]?.entering"
+           [class.card-leaving]="cardAnimations[i]?.leaving"
+           (click)="selectCard(i)"
+           [style.animation-delay]="i * 0.1 + 's'">
+        <img [src]="getCardImagePath(card)" 
+             [alt]="getCardDisplayName(card)"
+             class="card-image"
+             (error)="onImageError($event, card)">
+        <div class="card-fallback" style="display: none;">
+          <div class="card-value">{{getCardValue(card)}}</div>
+          <div class="card-suit" [ngClass]="'suit-' + getCardSuit(card)">
+            {{getSuitSymbol(getCardSuit(card))}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carta robada con animación -->
+  <div *ngIf="drawnCard" class="drawn-card-area">
+    <h3>Carta robada:</h3>
+    <div class="drawn-card-container">
+      <div class="card drawn-card" [class.card-flip-in]="showDrawnCardAnimation">
+        <img [src]="getCardImagePath(drawnCard)" 
+             [alt]="getCardDisplayName(drawnCard)"
+             class="card-image"
+             (error)="onImageError($event, drawnCard)">
+        <div class="card-fallback" style="display: none;">
+          <div class="card-value">{{getCardValue(drawnCard)}}</div>
+          <div class="card-suit" [ngClass]="'suit-' + getCardSuit(drawnCard)">
+            {{getSuitSymbol(getCardSuit(drawnCard))}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones del juego -->
+  <div class="game-actions">
+    <ng-container *ngIf="!drawnCard">
+      <button class="btn btn-primary action-btn" 
+              [disabled]="!isYourTurn" 
+              (click)="drawFromDeck()">
+        🎴 Robar del mazo
+      </button>
+      <button class="btn btn-primary action-btn" 
+              [disabled]="!isYourTurn || !canDrawFromDiscard()" 
+              (click)="drawFromDiscard()">
+        ♻️ Robar descartada
+      </button>
+    </ng-container>
+    
+    <ng-container *ngIf="drawnCard">
+      <button class="btn btn-success action-btn" 
+              [disabled]="selectedCardIndex === -1" 
+              (click)="confirmCardSwap()">
+        ↪️ Cambiar carta
+      </button>
+      <button class="btn btn-danger action-btn" 
+              (click)="keepCurrentCards()">
+        ❌ Descartar robada
+      </button>
+    </ng-container>
+
+    <button class="btn btn-warning action-btn" 
+            [disabled]="!canCloseRound" 
+            (click)="closeRound()">
+      🎯 Cerrar ronda
+    </button>
+  </div>
+</div>
+
+<!-- Overlay para mostrar imagen del ganador -->
+<div *ngIf="showWinnerImage" class="winner-overlay">
+  <div class="winner-content">
+    <img [src]="winnerImageSrc" [alt]="winnerText" class="winner-image">
+    <h2 class="winner-text">{{ winnerText }}</h2>
+  </div>
+</div>

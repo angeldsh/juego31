@@ -1,0 +1,68 @@
+<div class="lobby-container">
+  <div *ngIf="!currentRoom" class="welcome-section">
+    <!-- Header romántico -->
+    <div class="romantic-header">
+      <h1 class="game-title">31</h1>
+
+    </div>
+      
+    <!-- Selección de jugador -->
+    <div class="player-selection">
+      <h3 class="selection-title">Elige tu jugador</h3>
+      <div class="player-cards">
+        <div 
+          *ngFor="let player of playerOptions" 
+          class="player-card"
+          [class.selected]="selectedPlayer === player.id"
+          (click)="selectPlayer(player.id)"
+        >
+          <div class="player-emoji">{{ player.emoji }}</div>
+          <div class="player-name">{{ player.name }}</div>
+          <div class="player-description">{{ player.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de acciones -->
+    <div class="game-form">
+      <div class="actions-section">
+        <div class="create-room">
+          <h3>Crear nueva partida</h3>
+          <button (click)="createRoom()" class="btn-create">
+            <span class="btn-icon">🎮</span>
+            Crear sala
+          </button>
+        </div>
+
+        <div class="divider">
+          <span>o</span>
+        </div>
+
+        <div class="join-room">
+          <h3>Unirse a partida</h3>
+          <div class="input-group">
+            <input 
+              [(ngModel)]="roomCode" 
+              placeholder="Código de la sala"
+              class="romantic-input"
+            />
+            <button (click)="joinRoom()" class="btn-join">
+              Unirse
+            </button>
+
+          </div>
+        </div>
+      <p class="love-message">Hecho con amor para Ruu</p>
+      <p class="love-message">Días juntos: {{ daysTogetherCount }} 💛</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="currentRoom">
+    <app-game 
+      [room]="currentRoom" 
+      [playerName]="playerName" 
+      [roomCode]="roomCode"
+    ></app-game>
+  </div>
+</div>
