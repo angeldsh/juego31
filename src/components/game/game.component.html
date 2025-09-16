@@ -47,7 +47,7 @@
 
     <!-- Carta robada debajo del mazo y descarte -->
     <div *ngIf="drawnCard" class="drawn-card-area">
-      <h3>Carta robada:</h3>
+      <h4>Robada:</h4>
       <div class="drawn-card-container">
         <div class="card drawn-card" [class.card-flip-in]="showDrawnCardAnimation">
           <img [src]="getCardImagePath(drawnCard)" 
@@ -68,7 +68,7 @@
   <!-- Cartas del jugador con puntuación integrada -->
   <div class="player-hand">
     <div class="player-hand-header">
-      <h3>Tus cartas ({{calculateHandPoints()}} puntos):</h3>
+      <h4>Tus cartas ({{calculateHandPoints()}} puntos):</h4>
     </div>
     <div class="cards-container">
       <div *ngFor="let card of playerCards; let i = index" 
