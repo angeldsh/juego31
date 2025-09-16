@@ -18,17 +18,49 @@
   opacity: 0.85; /* Menos transparente */
 }
 
+/* Solo cambio el mensaje de espera a azul */
 .waiting {
-  background: rgba(255, 234, 167, 0.4); /* Amarillo menos transparente */
-  padding: 5px;
-  border-radius: 15px;
+  background: linear-gradient(135deg, #d6e6fa 0%, #60a5fa 100%);
+  padding: 8px 16px;
+  border-radius: 20px;
   text-align: center;
-  margin: 3px auto;
-  max-width: 280px;
-  color: rgba(139, 69, 19, 0.8); /* Color más visible */
-  font-size: 0.9rem;
-  border: 1px solid rgba(255, 234, 167, 0.5);
+  margin: 5px auto;
+  max-width: 300px;
+  color: #071236;
+  font-size: 0.95rem;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 4px 15px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  font-weight: 500;
+  animation: gentlePulse 3s ease-in-out infinite;
 }
+
+/* Botones transparentes cuando no es tu turno */
+.game-container.waiting-turn .action-btn {
+  opacity: 0.3;
+  pointer-events: none;
+  filter: grayscale(50%);
+  transition: all 0.3s ease;
+}
+
+/* Animación suave para el mensaje de espera */
+@keyframes gentlePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 
+      0 4px 15px rgba(59, 130, 246, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 
+      0 6px 20px rgba(59, 130, 246, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+}
+
+
 
 .game-title {
   color: #e17055;
@@ -913,7 +945,7 @@
 }
 
 :host ::ng-deep .swal2-icon.swal2-success .swal2-success-ring {
-  border-color: rgba(39, 174, 96, 0.3) !important;
+  border-color: #27ae60 !important;
 }
 
 :host ::ng-deep .swal2-icon.swal2-success [class^='swal2-success-line'] {
