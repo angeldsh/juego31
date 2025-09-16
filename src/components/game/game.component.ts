@@ -275,10 +275,23 @@ export class GameComponent implements OnInit, OnDestroy {
       const success = await this.roomService.closeRound(this.roomCode, this.playerName);
       if (success) {
         await Swal.fire({
-          title: '¡Te has plantado!',
-          text: `Te has plantado con ${points} puntos. El otro jugador tiene un turno más.`,
-          icon: 'info',
-          confirmButtonText: 'OK'
+          title: 'Plantado',
+          html: `<div style="text-align: center; margin: 5px 0;"><span style="color: #27ae60; font-weight: 600;">${points} puntos</span><br><small style="color: #7f8c8d; margin-top: 8px; display: block;">El otro jugador tiene un turno más</small></div>`,
+          icon: 'success',
+          confirmButtonText: 'OK',
+          showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+          },
+          customClass: {
+            popup: 'swal-custom-popup',
+            title: 'swal-custom-title'
+          },
+          buttonsStyling: false,
+          timer: 3000,
+          timerProgressBar: true
         });
       } else {
         await Swal.fire({

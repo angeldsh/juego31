@@ -155,4 +155,27 @@ export class LobbyComponent implements OnInit, OnDestroy {
       this.currentRoom = room;
     });
   }
+  onInputFocus() {
+    // Agregar clase para manejar el estado de focus
+    document.body.classList.add('input-focused');
+    
+    // Scroll suave hacia el input en móviles
+    if (window.innerWidth <= 768) {
+      setTimeout(() => {
+        const inputElement = document.querySelector('.mobile-input') as HTMLElement;
+        if (inputElement) {
+          inputElement.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'nearest'
+          });
+        }
+      }, 300);
+    }
+  }
+
+  onInputBlur() {
+    // Remover clase cuando se pierde el focus
+    document.body.classList.remove('input-focused');
+  }
 }

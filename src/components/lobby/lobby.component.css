@@ -580,61 +580,86 @@
   }
 }
 
-/* Optimización adicional para pantallas muy pequeñas */
-@media (max-width: 360px) {
+/* Optimización específica para teclado móvil */
+.mobile-friendly {
+  position: relative;
+}
+
+.mobile-input {
+  font-size: 16px !important; /* Evita zoom automático en iOS */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Cuando el input está enfocado en móvil */
+.input-focused .welcome-section {
+  transform: translateY(-20px);
+  transition: transform 0.3s ease;
+}
+
+/* Media query específica para el problema del teclado */
+@media (max-width: 768px) {
+  .lobby-container {
+    min-height: 100vh;
+    height: auto;
+    align-items: flex-start;
+    padding-top: 20px;
+  }
+  
   .welcome-section {
-    padding: 10px;
+    max-height: none;
+    margin-bottom: 20px;
+    position: relative;
   }
   
-  .game-title {
-    font-size: 1.6em;
+  /* Cuando el input está enfocado */
+  .input-focused .lobby-container {
+    padding-top: 10px;
   }
   
-  .player-card {
-    max-width: 180px;
+  .input-focused .welcome-section {
+    transform: translateY(-30px);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Ajuste específico para el área de unirse */
+  .join-room {
+    margin-bottom: 30px;
   }
   
   .romantic-input {
-    font-size: 13px;
-    padding: 8px 12px;
-  }
-  
-  .btn-create, .btn-join {
-    font-size: 13px;
-    padding: 8px 16px;
+    font-size: 16px !important;
+    padding: 14px 18px;
+    min-height: 48px;
   }
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .input-focused .welcome-section {
+    transform: translateY(-50px);
+  }
+  
   .lobby-container {
-    padding: 10px;
+    padding: 10px 10px 100px 10px; /* Espacio extra abajo */
+  }
+}
+
+/* Landscape en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  .lobby-container {
+    height: auto;
+    min-height: 100vh;
+    padding: 5px 10px 80px 10px;
   }
   
   .welcome-section {
-    padding: 30px 20px;
+    padding: 15px;
+    max-height: none;
   }
   
-  .game-title {
-    font-size: 2em;
-  }
-  
-  .player-cards {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .player-card {
-    width: 200px;
-  }
-  
-  .join-room .input-group {
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .join-room .btn-join {
-    width: 100%;
+  .input-focused .welcome-section {
+    transform: translateY(-40px);
   }
 }
 

@@ -40,16 +40,22 @@
 
         <div class="join-room">
           <h3>Unirse a partida</h3>
-          <div class="input-group">
+          <div class="input-group mobile-friendly">
             <input 
               [(ngModel)]="roomCode" 
               placeholder="Código de la sala"
-              class="romantic-input"
+              class="romantic-input mobile-input"
+              #roomInput
+              (focus)="onInputFocus()"
+              (blur)="onInputBlur()"
+              autocomplete="off"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
             />
             <button (click)="joinRoom()" class="btn-join">
               Unirse
             </button>
-
           </div>
         </div>
       <p class="love-message">Hecho con amor para Ruu</p>

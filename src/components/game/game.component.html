@@ -1,10 +1,12 @@
-<div class="game-container" *ngIf="room">
+<div class="game-container" [class.waiting-turn]="!isYourTurn">
   <h2>Juego 31 - Sala: {{roomCode}}</h2>
   
   <!-- Información del jugador -->
   <div class="player-info">
-    <p *ngIf="isYourTurn" class="turn-indicator">🎯 Es tu turno</p>
-    <p *ngIf="!isYourTurn" class="waiting">⏳ Esperando turno...</p>
+    <p *ngIf="isYourTurn && room?.status !== 'round_closing'" class="turn-indicator">🎯 Es tu turno</p>
+    <p *ngIf="isYourTurn && room?.status === 'round_closing'" class="last-turn-indicator">⚡ ¡ÚLTIMA RONDA! Es tu turno final</p>
+    <p *ngIf="!isYourTurn && room?.status !== 'round_closing'" class="waiting">⏳ Esperando turno...</p>
+    <p *ngIf="!isYourTurn && room?.status === 'round_closing'" class="you-closed">✅ Te plantaste - El otro jugador tiene un turno más</p>
   </div>
 
   <!-- Mesa de juego - Mazo y Descarte en fila -->
