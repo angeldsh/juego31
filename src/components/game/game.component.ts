@@ -214,7 +214,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
 
   get canCloseRound(): boolean {
-    return this.isYourTurn && !this.drawnCard && this.room.status !== 'round_closing';
+    const hasMinimumPoints = this.calculateHandPoints() >= 21;
+    return this.isYourTurn && !this.drawnCard && this.room.status !== 'round_closing' && hasMinimumPoints;
   }
 
   getNextPlayerTurn(): string {
@@ -275,23 +276,26 @@ export class GameComponent implements OnInit, OnDestroy {
       const success = await this.roomService.closeRound(this.roomCode, this.playerName);
       if (success) {
         await Swal.fire({
-          title: 'Plantado',
-          html: `<div style="text-align: center; margin: 5px 0;"><span style="color: #27ae60; font-weight: 600;">${points} puntos</span><br><small style="color: #7f8c8d; margin-top: 8px; display: block;">El otro jugador tiene un turno más</small></div>`,
+          title: '🎯 ¡Plantado!',
+          html: `<div style="text-align: center; font-size: 16px;"><span style="color: #27ae60; font-weight: 700; font-size: 18px;">${points} puntos</span><br><small style="color: #666; margin-top: 4px; display: block; font-size: 13px;">Turno del oponente</small></div>`,
           icon: 'success',
-          confirmButtonText: 'OK',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top',
           showClass: {
-            popup: 'animate__animated animate__fadeInUp animate__faster'
+            popup: 'animate__animated animate__fadeInDown animate__faster'
           },
           hideClass: {
-            popup: 'animate__animated animate__fadeOutDown animate__faster'
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
           },
           customClass: {
-            popup: 'swal-custom-popup',
-            title: 'swal-custom-title'
+            popup: 'swal-mobile-toast',
+            title: 'swal-mobile-title'
           },
-          buttonsStyling: false,
-          timer: 3000,
-          timerProgressBar: true
+          width: '280px',
+          padding: '12px'
         });
       } else {
         await Swal.fire({
@@ -317,6 +321,56 @@ export class GameComponent implements OnInit, OnDestroy {
   winnerText: string = '';
   private isHandlingRoundEnd: boolean = false;
 
+  // Pila de imágenes aleatorias del abecedario
+  private celebrationImages: string[] = [
+    'assets/a.jpeg',
+    'assets/b.jpeg',
+    'assets/c.jpeg',
+    'assets/d.jpeg',
+    'assets/e.jpeg',
+    'assets/f.jpeg',
+    'assets/g.jpeg',
+    'assets/h.jpeg',
+    'assets/i.jpeg',
+    'assets/j.jpeg',
+    'assets/k.jpeg',
+    'assets/l.jpeg',
+    'assets/m.jpeg',
+    'assets/n.jpeg',
+    'assets/o.jpeg',
+    'assets/p.jpeg',
+    'assets/q.jpeg',
+    'assets/r.jpeg',
+    'assets/s.jpeg',
+    'assets/t.jpeg',
+    'assets/u.jpeg',
+    'assets/w.jpeg',
+    'assets/x.jpeg',
+    'assets/y.jpeg',
+    'assets/z.jpeg',
+    'assets/ñ.jpeg'
+  ];
+  
+  private lastUsedImageIndex: number = -1;
+
+  // Función para obtener una imagen aleatoria sin repetir la anterior
+  private getRandomCelebrationImage(): string {
+    let randomIndex;
+    
+    // Si solo hay una imagen, usarla
+    if (this.celebrationImages.length === 1) {
+      return this.celebrationImages[0];
+    }
+    
+    // Evitar repetir la misma imagen consecutivamente
+    do {
+      randomIndex = Math.floor(Math.random() * this.celebrationImages.length);
+    } while (randomIndex === this.lastUsedImageIndex && this.celebrationImages.length > 1);
+    
+    this.lastUsedImageIndex = randomIndex;
+    return this.celebrationImages[randomIndex];
+  }
+
   async handleRoundEnd() {
     // Evitar ejecuciones múltiples
     if (this.isHandlingRoundEnd || this.showWinnerImage) return;
@@ -328,17 +382,14 @@ export class GameComponent implements OnInit, OnDestroy {
       const winnerPoints = this.room.lastWinnerPoints || 0;
       const loserPoints = this.room.lastLoserPoints || 0;
       
+      // Usar directamente la imagen que viene del servidor
+      this.winnerImageSrc = this.room.celebrationImage || this.getRandomCelebrationImage();
+      
+      // Mantener los mensajes específicos del ganador
       if (winner === 'EMPATE') {
-        this.winnerImageSrc = 'assets/empate.jpeg';
         this.winnerText = `¡Empate! Ambos con ${winnerPoints} puntos`;
       } else {
-        if (winner === 'Águila') {
-          this.winnerImageSrc = 'assets/aguila-winner.jpeg';
-          this.winnerText = `¡${winner} ganó con ${winnerPoints} puntos!`;
-        } else if (winner === 'Lince') {
-          this.winnerImageSrc = 'assets/lince-winner.jpeg';
-          this.winnerText = `¡${winner} ganó con ${winnerPoints} puntos!`;
-        }
+        this.winnerText = `¡${winner} ganó con ${winnerPoints} puntos!`;
       }
       
       this.showWinnerImage = true;
@@ -451,5 +502,24 @@ export class GameComponent implements OnInit, OnDestroy {
     if (fallback) {
       fallback.style.display = 'flex';
     }
+  }
+
+  getPlayerIcon(): string {
+    // Determinar el icono basado en el nombre del jugador
+    if (this.playerName === 'Aguila' || this.playerName === 'Águila') {
+      return '🦅'; // Águila
+    } else if (this.playerName === 'Lince') {
+      return '🐱'; // Lince (usando gato como representación)
+    }
+    
+    // Iconos alternativos más específicos
+    if (this.playerName.toLowerCase().includes('aguila') || this.playerName.toLowerCase().includes('águila')) {
+      return '🦅';
+    } else if (this.playerName.toLowerCase().includes('lince')) {
+      return '🐾'; // Huellas de lince
+    }
+    
+    // Icono por defecto
+    return '👤';
   }
 }

@@ -1,5 +1,8 @@
 <div class="game-container" [class.waiting-turn]="!isYourTurn">
-  <h2>Juego 31 - Sala: {{roomCode}}</h2>
+  <h2 class="game-title-enhanced">
+    <span class="title-number">3️⃣1️⃣</span>
+    <span class="room-code"> Sala: {{roomCode}}</span>
+  </h2>
   
   <!-- Información del jugador -->
   <div class="player-info">
@@ -70,7 +73,10 @@
   <!-- Cartas del jugador con puntuación integrada -->
   <div class="player-hand">
     <div class="player-hand-header">
-      <h4>Tus cartas ({{calculateHandPoints()}} puntos):</h4>
+      <h4 class="player-score-header">
+        <span class="player-icon">{{ getPlayerIcon() }}</span>
+        <span class="score-text">Tus cartas ({{calculateHandPoints()}} puntos)</span>
+      </h4>
     </div>
     <div class="cards-container">
       <div *ngFor="let card of playerCards; let i = index" 

@@ -312,8 +312,13 @@ export class RoomService {
     // Actualizar estado de la sala
     roomData.status = loser.lives <= 0 ? 'finished' : 'waiting';
     roomData.lastWinner = winner.name;
+    // En el método donde se determina el ganador, agregar:
+    // GENERAR LA IMAGEN DE CELEBRACIÓN AQUÍ
+    roomData.celebrationImage = this.getRandomCelebrationImage();
+
     roomData.lastWinnerPoints = winnerPoints;
     roomData.lastLoserPoints = loserPoints;
+    roomData.status = 'waiting';
     
     delete roomData.closingPlayer;
     
@@ -325,6 +330,41 @@ export class RoomService {
     };
   }
 
+  // Agregar el array de imágenes de celebración al servicio
+  private celebrationImages: string[] = [
+    'assets/a.jpeg',
+    'assets/b.jpeg',
+    'assets/c.jpeg',
+    'assets/d.jpeg',
+    'assets/e.jpeg',
+    'assets/f.jpeg',
+    'assets/g.jpeg',
+    'assets/h.jpeg',
+    'assets/i.jpeg',
+    'assets/j.jpeg',
+    'assets/k.jpeg',
+    'assets/l.jpeg',
+    'assets/m.jpeg',
+    'assets/n.jpeg',
+    'assets/o.jpeg',
+    'assets/p.jpeg',
+    'assets/q.jpeg',
+    'assets/r.jpeg',
+    'assets/s.jpeg',
+    'assets/t.jpeg',
+    'assets/u.jpeg',
+    'assets/w.jpeg',
+    'assets/x.jpeg',
+    'assets/y.jpeg',
+    'assets/z.jpeg',
+    'assets/ñ.jpeg'
+  ];
+  
+  private getRandomCelebrationImage(): string {
+    const randomIndex = Math.floor(Math.random() * this.celebrationImages.length);
+    return this.celebrationImages[randomIndex];
+  }
+  
   async closeRound(code: string, playerName: string): Promise<boolean> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
@@ -334,16 +374,13 @@ export class RoomService {
     const roomData = snapshot.val() as Room;
     
     // Verificar que es el turno del jugador
-    if (roomData.turn !== playerName) {
-      console.error('No es el turno del jugador');
-      return false;
-    }
+    if (roomData.turn !== playerName) return false;
     
-    // Marcar que el jugador se plantó
-    roomData.status = 'round_closing';
+    // Marcar que este jugador se plantó
     roomData.closingPlayer = playerName;
+    roomData.status = 'round_closing';
     
-    // Cambiar turno al otro jugador DIRECTAMENTE
+    // Cambiar turno al siguiente jugador para su último turno
     const currentIndex = roomData.players.findIndex(p => p.name === playerName);
     const nextIndex = (currentIndex + 1) % roomData.players.length;
     roomData.turn = roomData.players[nextIndex].name;
@@ -391,6 +428,7 @@ export class RoomService {
       delete roomData.lastWinnerPoints;
       delete roomData.lastLoserPoints;
       delete roomData.closingPlayer;
+      delete roomData.celebrationImage;
       
       // Generar nuevo mazo completamente mezclado
       roomData.deck = this.generateDeck();

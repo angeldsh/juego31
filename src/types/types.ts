@@ -14,4 +14,5 @@ export interface Room {
   lastWinner?: string;
   lastWinnerPoints?: number;
   lastLoserPoints?: number;
+  celebrationImage?: string; // Nueva propiedad para la imagen compartida
 }
