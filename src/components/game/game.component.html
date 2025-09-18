@@ -103,34 +103,41 @@
   <!-- Acciones del juego -->
   <div class="game-actions">
     <ng-container *ngIf="!drawnCard">
-      <button class="btn btn-primary action-btn" 
+      <button class="btn btn-draw-deck action-btn" 
               [disabled]="!isYourTurn" 
               (click)="drawFromDeck()">
-        🎴 Robar del mazo
+        <span class="btn-icon">🎴</span>
+        <span class="btn-text">Robar Mazo</span>
       </button>
-      <button class="btn btn-primary action-btn" 
+      <button class="btn btn-draw-discard action-btn" 
               [disabled]="!isYourTurn || !canDrawFromDiscard()" 
               (click)="drawFromDiscard()">
-        ♻️ Robar descartada
+        <span class="btn-icon">♻️</span>
+        <span class="btn-text">Robar Descarte</span>
       </button>
     </ng-container>
     
-    <ng-container *ngIf="drawnCard">
-      <button class="btn btn-success action-btn" 
-              [disabled]="selectedCardIndex === -1" 
+       <ng-container *ngIf="drawnCard">
+      <button class="btn btn-swap action-btn" 
+              [disabled]="selectedCardIndex === -1 || !isYourTurn" 
               (click)="confirmCardSwap()">
-        ↪️ Cambiar
+        <span class="btn-icon">🔄</span>
+        <span class="btn-text">Cambiar</span>
       </button>
-      <button class="btn btn-danger action-btn" 
+      <button class="btn btn-pass action-btn" 
+              [disabled]="!isYourTurn"
               (click)="keepCurrentCards()">
-        ❌ Descartar
+        <span class="btn-icon">👋</span>
+        <span class="btn-text">Pasar</span>
       </button>
     </ng-container>
 
-    <button class="btn btn-warning action-btn" 
-            [disabled]="!canCloseRound" 
+    <!-- Solo mostrar botón cerrar si tiene 21+ puntos -->
+    <button *ngIf="calculateHandPoints() >= 21 && isYourTurn && !drawnCard && room.status !== 'round_closing'" 
+            class="btn btn-close action-btn" 
             (click)="closeRound()">
-      🎯 Cerrar
+      <span class="btn-icon">🎯</span>
+      <span class="btn-text">¡Cerrar!</span>
     </button>
   </div>
 </div>
