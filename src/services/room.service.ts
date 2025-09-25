@@ -10,6 +10,42 @@ export class RoomService {
   suits = ['C', 'O', 'E', 'B'];
   values = ['1','2','3','4','5','6','7','S','C','R'];
 
+  // Agregar las imágenes de celebración al servicio
+  private celebrationImages: string[] = [
+    'assets/a.jpeg',
+    'assets/b.jpeg',
+    'assets/c.jpeg',
+    'assets/d.jpeg',
+    'assets/e.jpeg',
+    'assets/f.jpeg',
+    'assets/g.jpeg',
+    'assets/h.jpeg',
+    'assets/i.jpeg',
+    'assets/j.jpeg',
+    'assets/k.jpeg',
+    'assets/l.jpeg',
+    'assets/m.jpeg',
+    'assets/n.jpeg',
+    'assets/o.jpeg',
+    'assets/p.jpeg',
+    'assets/q.jpeg',
+    'assets/r.jpeg',
+    'assets/s.jpeg',
+    'assets/t.jpeg',
+    'assets/u.jpeg',
+    'assets/w.jpeg',
+    'assets/x.jpeg',
+    'assets/y.jpeg',
+    'assets/z.jpeg',
+    'assets/ñ.jpeg'
+  ];
+
+  // Método para generar imagen aleatoria
+  private getRandomCelebrationImage(): string {
+    const randomIndex = Math.floor(Math.random() * this.celebrationImages.length);
+    return this.celebrationImages[randomIndex];
+  }
+
   constructor(private db: Database) {}
 
   async createRoom(playerName: string): Promise<string> {
@@ -398,6 +434,9 @@ export class RoomService {
     const points1 = this.calculatePlayerPoints(player1.cards);
     const points2 = this.calculatePlayerPoints(player2.cards);
     
+    // Generar imagen de celebración única para ambos jugadores
+    const celebrationImage = this.getRandomCelebrationImage();
+    
     // Verificar empate
     if (points1 === points2) {
       // En caso de empate, nadie pierde vidas
@@ -405,6 +444,7 @@ export class RoomService {
       roomData.lastWinner = 'EMPATE';
       roomData.lastWinnerPoints = points1;
       roomData.lastLoserPoints = points2;
+      roomData.celebrationImage = celebrationImage;
       
       delete roomData.closingPlayer;
       
@@ -434,6 +474,7 @@ export class RoomService {
     roomData.lastWinner = winner.name;
     roomData.lastWinnerPoints = this.calculatePlayerPoints(winner.cards);
     roomData.lastLoserPoints = this.calculatePlayerPoints(loser.cards);
+    roomData.celebrationImage = celebrationImage;
     
     delete roomData.closingPlayer;
     
@@ -508,6 +549,7 @@ export class RoomService {
     delete roomData.lastWinner;
     delete roomData.lastWinnerPoints;
     delete roomData.lastLoserPoints;
+    delete roomData.celebrationImage;
     
     await this.updateRoom(code, roomData);
     return true;

@@ -22,6 +22,7 @@ export interface Room {
   lastWinner?: string;
   lastWinnerPoints?: number;
   lastLoserPoints?: number;
+  celebrationImage?: string; // Nueva propiedad para la imagen de celebración
   opponentActions?: { [playerName: string]: OpponentAction[] };
   lastAction?: OpponentAction; // Restaurar esta línea
 }

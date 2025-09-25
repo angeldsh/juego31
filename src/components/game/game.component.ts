@@ -383,8 +383,8 @@ export class GameComponent implements OnInit, OnDestroy {
       const winnerPoints = this.room.lastWinnerPoints || 0;
       const loserPoints = this.room.lastLoserPoints || 0;
       
-      // Usar directamente la imagen que viene del servidor
-      this.winnerImageSrc = this.room.celebrationImage || this.getRandomCelebrationImage();
+      // Usar SOLO la imagen que viene del servidor (ya no generar localmente)
+      this.winnerImageSrc = this.room.celebrationImage || 'assets/a.jpeg'; // fallback por seguridad
       
       // Mantener los mensajes específicos del ganador
       if (winner === 'EMPATE') {
