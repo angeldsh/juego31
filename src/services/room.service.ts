@@ -550,6 +550,8 @@ export class RoomService {
     delete roomData.lastWinnerPoints;
     delete roomData.lastLoserPoints;
     delete roomData.celebrationImage;
+    delete roomData.opponentActions; // Limpiar todas las acciones del oponente
+    delete roomData.lastAction; // Limpiar la última acción también
     
     await this.updateRoom(code, roomData);
     return true;
