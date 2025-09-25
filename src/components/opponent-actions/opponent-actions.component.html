@@ -1,0 +1,31 @@
+<div class="opponent-actions-container">
+  <div class="opponent-header">
+    <h4 class="opponent-name">
+      <span class="opponent-icon">{{ getOpponentIcon() }}</span>
+      {{ opponentName }}
+      <span *ngIf="isOpponentTurn" class="turn-indicator">🎯</span>
+    </h4>
+    <div *ngIf="lastAction" class="last-action">
+      <span class="action-text">{{ getActionDescription() }}</span>
+    </div>
+  </div>
+  
+  <div class="opponent-cards">
+    <div class="cards-mini-container">
+      <div *ngFor="let card of opponentCards; let i = index" 
+           class="card-mini"
+           [class.card-changed]="lastAction?.type === 'swap' && i === 0"
+           [class.card-new]="lastAction?.type === 'draw_deck' || lastAction?.type === 'draw_discard'">
+        <!-- Mostrar dorso de las cartas del oponente -->
+        <div class="card-back">
+          <img src="/assets/cards/RV.png" alt="Carta oculta" class="card-mini-image">
+        </div>
+        
+        <!-- Indicador de carta cambiada -->
+        <div *ngIf="lastAction?.type === 'swap' && i === 0" class="change-indicator">
+          ✨
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

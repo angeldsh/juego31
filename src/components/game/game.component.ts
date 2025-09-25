@@ -4,12 +4,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { OpponentActionsComponent } from '../opponent-actions/opponent-actions.component';
+import { OpponentAction } from '../../types/types';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css'],
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, OpponentActionsComponent],
   standalone: true
 })
 export class GameComponent implements OnInit, OnDestroy {
@@ -27,6 +29,8 @@ export class GameComponent implements OnInit, OnDestroy {
   cardAnimations: { [key: number]: { entering: boolean, leaving: boolean } } = {};
   showDrawnCardAnimation: boolean = false;
   isDrawingFromDeck: boolean = false;
+  showWinnerImage: boolean = false;
+  isHandlingRoundEnd: boolean = false;
 
   constructor(private roomService: RoomService) {}
 
@@ -273,7 +277,7 @@ export class GameComponent implements OnInit, OnDestroy {
     
     try {
       const points = this.calculateHandPoints();
-      const success = await this.roomService.closeRound(this.roomCode, this.playerName);
+      const success = await this.roomService.plantarse(this.roomCode, this.playerName);
       if (success) {
         await Swal.fire({
           title: '🎯 ¡Plantado!',
@@ -315,11 +319,8 @@ export class GameComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Agregar método para manejar el final de ronda
-  showWinnerImage: boolean = false;
   winnerImageSrc: string = '';
   winnerText: string = '';
-  private isHandlingRoundEnd: boolean = false;
 
   // Pila de imágenes aleatorias del abecedario
   private celebrationImages: string[] = [
@@ -521,5 +522,78 @@ export class GameComponent implements OnInit, OnDestroy {
     
     // Icono por defecto
     return '👤';
+  }
+
+
+// Nueva función para obtener el oponente
+getOpponent() {
+  if (!this.room || !this.room.players || this.room.players.length < 2) {
+    return null;
+  }
+  return this.room.players.find((p: any) => p.name !== this.playerName);
+}
+
+ getOpponentLastAction(): OpponentAction | undefined {
+    const opponent = this.getOpponent();
+    if (!opponent || !this.room) {
+      return undefined;
+    }
+    const action = this.roomService.getLastOpponentAction(this.room, opponent.name);
+    return action || undefined; // Convierte null a undefined
+  }
+
+  async plantarse() {
+    if (!this.isYourTurn) {
+      await Swal.fire({
+        title: 'No es tu turno',
+        text: 'Espera a que sea tu turno para plantarte',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      });
+      return;
+    }
+    
+    try {
+      const points = this.calculateHandPoints();
+      const success = await this.roomService.plantarse(this.roomCode, this.playerName);
+      if (success) {
+        await Swal.fire({
+          title: '🎯 ¡Plantado!',
+          html: `<div style="text-align: center; font-size: 16px;"><span style="color: #27ae60; font-weight: 700; font-size: 18px;">${points} puntos</span><br><small style="color: #666; margin-top: 4px; display: block; font-size: 13px;">Turno del oponente</small></div>`,
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top',
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+          },
+          customClass: {
+            popup: 'swal-mobile-toast',
+            title: 'swal-mobile-title'
+          },
+          width: '280px',
+          padding: '12px'
+        });
+      } else {
+        await Swal.fire({
+          title: 'Error',
+          text: 'Error al plantarse',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      await Swal.fire({
+        title: 'Error',
+        text: 'Error al plantarse',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Database, ref, set, get, onValue, off } from '@angular/fire/database';
 import { Observable } from 'rxjs';
-import { Room, Player } from '../types/types';
+import { Room, Player, OpponentAction } from '../types/types';
 
 @Injectable({
   providedIn: 'root'
@@ -173,6 +173,12 @@ export class RoomService {
     // Robar carta del deck
     const drawnCard = roomData.deck.pop()!;
     
+    // Trackear acción del oponente
+    this.trackOpponentAction(roomData, playerName, {
+      type: 'draw_deck',
+      timestamp: Date.now()
+    });
+    
     await this.updateRoom(code, roomData);
     return drawnCard;
   }
@@ -193,6 +199,13 @@ export class RoomService {
     
     // Robar la última carta del descarte
     const drawnCard = roomData.discardPile.pop()!;
+    
+    // Trackear acción del oponente
+    this.trackOpponentAction(roomData, playerName, {
+      type: 'draw_discard',
+      cardDrawn: drawnCard,
+      timestamp: Date.now()
+    });
     
     await this.updateRoom(code, roomData);
     return drawnCard;
@@ -218,6 +231,14 @@ export class RoomService {
     const oldCard = player.cards[cardIndex];
     roomData.discardPile.push(oldCard);
     player.cards[cardIndex] = newCard;
+    
+    // Trackear acción del oponente
+    this.trackOpponentAction(roomData, playerName, {
+      type: 'swap',
+      cardDiscarded: oldCard,
+      cardSwapped: newCard,
+      timestamp: Date.now()
+    });
     
     // Verificar si es el final de ronda
     const isRoundClosing = roomData.status === 'round_closing';
@@ -254,6 +275,13 @@ export class RoomService {
     // Agregar la carta al descarte
     roomData.discardPile.push(cardToDiscard);
     
+    // Trackear acción del oponente
+    this.trackOpponentAction(roomData, playerName, {
+      type: 'discard',
+      cardDiscarded: cardToDiscard,
+      timestamp: Date.now()
+    });
+    
     // Verificar si es el final de ronda
     const isRoundClosing = roomData.status === 'round_closing';
     
@@ -272,7 +300,95 @@ export class RoomService {
       return true;
     }
   }
-  private finishRoundInternal(roomData: Room): { winner: string, winnerPoints: number, loserPoints: number, isTie: boolean } | null {
+
+  // Nueva función para trackear acciones del oponente
+  private trackOpponentAction(roomData: Room, playerName: string, action: OpponentAction) {
+    // Inicializar opponentActions si no existe
+    if (!roomData.opponentActions) {
+      roomData.opponentActions = {};
+    }
+    
+    // Inicializar array para el jugador si no existe
+    if (!roomData.opponentActions[playerName]) {
+      roomData.opponentActions[playerName] = [];
+    }
+    
+    // Añadir la acción
+    roomData.opponentActions[playerName].push(action);
+    
+    // Mantener solo las últimas 5 acciones para no sobrecargar
+    if (roomData.opponentActions[playerName].length > 5) {
+      roomData.opponentActions[playerName] = roomData.opponentActions[playerName].slice(-5);
+    }
+    
+    // Eliminar esta línea que causaba el problema global:
+    // roomData.lastAction = action;
+  }
+
+  // Función para obtener la última acción del oponente específico
+  getLastOpponentAction(roomData: Room, opponentName: string): OpponentAction | null {
+    if (!roomData.opponentActions || !roomData.opponentActions[opponentName]) {
+      return null;
+    }
+    const actions = roomData.opponentActions[opponentName];
+    return actions.length > 0 ? actions[actions.length - 1] : null;
+  }
+
+  // Función para obtener las acciones del oponente
+  getOpponentActions(roomData: Room, opponentName: string): OpponentAction[] {
+    if (!roomData.opponentActions || !roomData.opponentActions[opponentName]) {
+      return [];
+    }
+    return roomData.opponentActions[opponentName];
+  }
+
+  async plantarse(code: string, playerName: string): Promise<boolean> {
+    const roomRef = ref(this.db, `rooms/${code}`);
+    const snapshot = await get(roomRef);
+    
+    if (!snapshot.exists()) return false;
+    
+    const roomData = snapshot.val() as Room;
+    
+    // Trackear acción del oponente
+    this.trackOpponentAction(roomData, playerName, {
+      type: 'discard',
+      timestamp: Date.now()
+    });
+    
+    // Cambiar turno al oponente para que tenga su último turno
+    const currentIndex = roomData.players.findIndex(p => p.name === playerName);
+    const nextIndex = (currentIndex + 1) % roomData.players.length;
+    roomData.turn = roomData.players[nextIndex].name;
+    
+    // Cambiar el estado a round_closing DESPUÉS del cambio de turno
+    roomData.status = 'round_closing';
+    roomData.closingPlayer = playerName;
+    
+    await this.updateRoom(code, roomData);
+    return true;
+  }
+
+  // Método para finalizar ronda (hacer público)
+  async finishRound(code: string): Promise<any> {
+    const roomRef = ref(this.db, `rooms/${code}`);
+    const snapshot = await get(roomRef);
+    
+    if (!snapshot.exists()) return null;
+    
+    const roomData = snapshot.val() as Room;
+    const result = this.finishRoundInternal(roomData);
+    
+    if (result) {
+      // Actualizar el estado con los resultados
+      await this.updateRoom(code, roomData);
+    }
+    
+    return result;
+  }
+
+  // Hacer público el método finishRoundInternal
+  finishRoundInternal(roomData: Room): { winner: string, winnerPoints: number, loserPoints: number, isTie: boolean } | null {
     if (roomData.players.length !== 2) return null;
     
     // Calcular puntos de ambos jugadores
@@ -300,163 +416,39 @@ export class RoomService {
       };
     }
     
-    // Determinar ganador (MAYOR puntuación gana)
-    const winner = points1 >= points2 ? player1 : player2;
-    const loser = points1 >= points2 ? player2 : player1;
-    const winnerPoints = Math.max(points1, points2);
-    const loserPoints = Math.min(points1, points2);
+    // Determinar ganador (MAYOR puntuación gana en el juego 31)
+    let winner: Player, loser: Player;
+    if (points1 > points2) {  // Cambiar < por >
+      winner = player1;
+      loser = player2;
+    } else {
+      winner = player2;
+      loser = player1;
+    }
     
-    // Restar vida al perdedor
-    loser.lives -= 1;
+    // El perdedor pierde una vida
+    loser.lives--;
     
     // Actualizar estado de la sala
-    roomData.status = loser.lives <= 0 ? 'finished' : 'waiting';
+    roomData.status = loser.lives > 0 ? 'waiting' : 'finished';
     roomData.lastWinner = winner.name;
-    // En el método donde se determina el ganador, agregar:
-    // GENERAR LA IMAGEN DE CELEBRACIÓN AQUÍ
-    roomData.celebrationImage = this.getRandomCelebrationImage();
-
-    roomData.lastWinnerPoints = winnerPoints;
-    roomData.lastLoserPoints = loserPoints;
-    roomData.status = 'waiting';
+    roomData.lastWinnerPoints = this.calculatePlayerPoints(winner.cards);
+    roomData.lastLoserPoints = this.calculatePlayerPoints(loser.cards);
     
     delete roomData.closingPlayer;
     
     return {
       winner: winner.name,
-      winnerPoints,
-      loserPoints,
+      winnerPoints: this.calculatePlayerPoints(winner.cards),
+      loserPoints: this.calculatePlayerPoints(loser.cards),
       isTie: false
     };
   }
 
-  // Agregar el array de imágenes de celebración al servicio
-  private celebrationImages: string[] = [
-    'assets/a.jpeg',
-    'assets/b.jpeg',
-    'assets/c.jpeg',
-    'assets/d.jpeg',
-    'assets/e.jpeg',
-    'assets/f.jpeg',
-    'assets/g.jpeg',
-    'assets/h.jpeg',
-    'assets/i.jpeg',
-    'assets/j.jpeg',
-    'assets/k.jpeg',
-    'assets/l.jpeg',
-    'assets/m.jpeg',
-    'assets/n.jpeg',
-    'assets/o.jpeg',
-    'assets/p.jpeg',
-    'assets/q.jpeg',
-    'assets/r.jpeg',
-    'assets/s.jpeg',
-    'assets/t.jpeg',
-    'assets/u.jpeg',
-    'assets/w.jpeg',
-    'assets/x.jpeg',
-    'assets/y.jpeg',
-    'assets/z.jpeg',
-    'assets/ñ.jpeg'
-  ];
-  
-  private getRandomCelebrationImage(): string {
-    const randomIndex = Math.floor(Math.random() * this.celebrationImages.length);
-    return this.celebrationImages[randomIndex];
-  }
-  
-  async closeRound(code: string, playerName: string): Promise<boolean> {
-    const roomRef = ref(this.db, `rooms/${code}`);
-    const snapshot = await get(roomRef);
-    
-    if (!snapshot.exists()) return false;
-    
-    const roomData = snapshot.val() as Room;
-    
-    // Verificar que es el turno del jugador
-    if (roomData.turn !== playerName) return false;
-    
-    // Marcar que este jugador se plantó
-    roomData.closingPlayer = playerName;
-    roomData.status = 'round_closing';
-    
-    // Cambiar turno al siguiente jugador para su último turno
-    const currentIndex = roomData.players.findIndex(p => p.name === playerName);
-    const nextIndex = (currentIndex + 1) % roomData.players.length;
-    roomData.turn = roomData.players[nextIndex].name;
-    
-    await this.updateRoom(code, roomData);
-    return true;
-  }
+ 
 
-
-  async finishRound(code: string): Promise<{ winner: string, winnerPoints: number, loserPoints: number, isTie: boolean } | null> {
-    const roomRef = ref(this.db, `rooms/${code}`);
-    const snapshot = await get(roomRef);
-    
-    if (!snapshot.exists()) return null;
-    
-    const roomData = snapshot.val() as Room;
-    const result = this.finishRoundInternal(roomData);
-    
-    if (result) {
-      // Actualizar el estado con los resultados
-      await this.updateRoom(code, roomData);
-      
-      // NO REINICIAR AUTOMÁTICAMENTE AQUÍ - lo hará el componente
-      // El componente manejará el reinicio después de mostrar la imagen
-    }
-    
-    return result;
-  }
-
-  // MEJORAR el método para reiniciar ronda
-  async startNewRound(code: string): Promise<boolean> {
-    const roomRef = ref(this.db, `rooms/${code}`);
-    const snapshot = await get(roomRef);
-    
-    if (!snapshot.exists()) return false;
-    
-    const roomData = snapshot.val() as Room;
-    
-    // Solo reiniciar si todos los jugadores están vivos
-    const allPlayersAlive = roomData.players.every(player => player.lives > 0);
-    
-    if (allPlayersAlive && roomData.status === 'waiting') {
-      // Limpiar TODAS las propiedades del ganador anterior
-      delete roomData.lastWinner;
-      delete roomData.lastWinnerPoints;
-      delete roomData.lastLoserPoints;
-      delete roomData.closingPlayer;
-      delete roomData.celebrationImage;
-      
-      // Generar nuevo mazo completamente mezclado
-      roomData.deck = this.generateDeck();
-      roomData.discardPile = [];
-      
-      // Dar 3 cartas nuevas a cada jugador
-      roomData.players.forEach(player => {
-        player.cards = this.drawCards(roomData.deck, 3);
-      });
-      
-      // Agregar carta inicial al descarte
-      if (roomData.deck.length > 0) {
-        roomData.discardPile.push(roomData.deck.pop()!);
-      }
-      
-      // El primer jugador empieza la nueva ronda
-      roomData.turn = roomData.players[0].name;
-      roomData.status = 'playing';
-      
-      await this.updateRoom(code, roomData);
-      return true;
-    }
-    
-    return false;
-  }
-
+  // Agrupar cartas por palo (como en el componente)
   private calculatePlayerPoints(cards: string[]): number {
-    // Agrupar cartas por palo (como en el componente)
     const suitGroups: { [key: string]: number[] } = {};
     
     for (const card of cards) {
@@ -486,5 +478,38 @@ export class RoomService {
     }
 
     return maxPoints;
+  }
+
+  // Add this new method before the closing brace
+  async startNewRound(code: string): Promise<boolean> {
+    const roomRef = ref(this.db, `rooms/${code}`);
+    const snapshot = await get(roomRef);
+    
+    if (!snapshot.exists()) return false;
+    
+    const roomData = snapshot.val() as Room;
+    
+    // Reset room for new round
+    const newDeck = this.generateDeck();
+    
+    // Deal new cards to all players
+    roomData.players.forEach(player => {
+      player.cards = this.drawCards(newDeck, 3);
+    });
+    
+    // Set up discard pile
+    roomData.discardPile = [this.drawCards(newDeck, 1)[0]];
+    roomData.deck = newDeck;
+    roomData.status = 'playing';
+    roomData.turn = roomData.players[0].name; // First player starts
+    
+    // Clear round-specific data
+    delete roomData.closingPlayer;
+    delete roomData.lastWinner;
+    delete roomData.lastWinnerPoints;
+    delete roomData.lastLoserPoints;
+    
+    await this.updateRoom(code, roomData);
+    return true;
   }
 }

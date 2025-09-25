@@ -1,0 +1,162 @@
+.opponent-actions-container {
+  background: rgba(242, 225, 114, 0.849);
+  border-radius: 12px;
+  padding: 15px;
+  margin: 10px 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+ 
+}
+
+.opponent-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.opponent-name {
+  color: #000000;
+  font-size: 1.1em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.opponent-icon {
+  font-size: 1.2em;
+}
+
+.turn-indicator {
+  animation: pulse 1.5s infinite;
+}
+
+.last-action {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(52, 152, 219, 0.2);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: #3b3704;
+}
+
+.action-icon {
+  font-size: 1.1em;
+}
+
+.opponent-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cards-mini-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.card-mini {
+  position: relative;
+  width: 40px;
+  height: 56px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.card-mini-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-back {
+  width: 100%;
+  height: 100%;
+}
+
+.card-changed {
+  animation: cardChange 1s ease-in-out;
+  border: 2px solid #f39c12;
+}
+
+.card-new {
+  animation: cardNew 0.8s ease-in-out;
+}
+
+.change-indicator {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #f39c12;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  animation: sparkle 1.5s infinite;
+}
+
+.discarded-card-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(231, 76, 60, 0.3);
+}
+
+.discard-label {
+  color: #e74c3c;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.discarded {
+  border: 2px solid #e74c3c;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes cardChange {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1) rotate(5deg); }
+  100% { transform: scale(1); }
+}
+
+@keyframes cardNew {
+  0% { transform: translateY(-10px) scale(0.8); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.2) rotate(180deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .opponent-actions-container {
+    padding: 10px;
+  }
+  
+  .card-mini {
+    width: 35px;
+    height: 49px;
+  }
+  
+  .opponent-name {
+    font-size: 1em;
+  }
+}
