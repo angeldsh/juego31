@@ -204,7 +204,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   canDrawFromDiscard(): boolean {
-    return this.room?.discardPile && this.room.discardPile.length > 0;
+    return this.room?.discardPile && this.room.discardPile.length > 0 && !this.drawnCard && this.isYourTurn;
   }
 
   selectCard(index: number) {
@@ -278,37 +278,54 @@ export class GameComponent implements OnInit, OnDestroy {
     try {
       const points = this.calculateHandPoints();
       const success = await this.roomService.plantarse(this.roomCode, this.playerName);
-      if (success) {
-        await Swal.fire({
-          title: '🎯 ¡Plantado!',
-          html: `<div style="text-align: center; font-size: 16px;"><span style="color: #27ae60; font-weight: 700; font-size: 18px;">${points} puntos</span><br><small style="color: #666; margin-top: 4px; display: block; font-size: 13px;">Turno del oponente</small></div>`,
-          icon: 'success',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar: true,
-          toast: true,
-          position: 'top',
-          showClass: {
-            popup: 'animate__animated animate__fadeInDown animate__faster'
-          },
-          hideClass: {
-            popup: 'animate__animated animate__fadeOutUp animate__faster'
-          },
-          customClass: {
-            popup: 'swal-mobile-toast',
-            title: 'swal-mobile-title'
-          },
-          width: '280px',
-          padding: '12px'
-        });
-      } else {
-        await Swal.fire({
-          title: 'Error',
-          text: 'Error al cerrar la ronda',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-      }
+     if (success) {
+  await Swal.fire({
+    title: '🌟 ¡Plantado!',
+    html: `
+      <div style="text-align: center; font-size: 16px;">
+        <span style="color: #d4a017; font-weight: 700; font-size: 18px;">
+          ${points} puntos
+        </span>
+        <br>
+        <small style="color: #8a7c5c; margin-top: 6px; display: block; font-size: 13px;">
+          Turno del oponente
+        </small>
+      </div>
+    `,
+    icon: 'success',
+    showConfirmButton: false,
+    timer: 2200,
+    timerProgressBar: true,
+    toast: true,
+    position: 'top',
+    background: '#fffbe6', // fondo amarillo claro
+    color: '#5a4a1f', // texto marrón suave
+    iconColor: '#f1c40f', // icono amarillo dorado
+    showClass: {
+      popup: 'animate__animated animate__fadeInDown animate__faster'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__fadeOutUp animate__faster'
+    },
+    customClass: {
+      popup: 'swal-mobile-toast',
+      title: 'swal-mobile-title'
+    },
+    width: '280px',
+    padding: '14px',
+  });
+} else {
+  await Swal.fire({
+    title: '⚠️ Error',
+    text: 'Error al cerrar la ronda',
+    icon: 'error',
+    confirmButtonText: 'OK',
+    confirmButtonColor: '#f39c12', // botón naranja/amarillo
+    background: '#fffbe6',
+    color: '#5a4a1f'
+  });
+}
+
     } catch (error) {
       await Swal.fire({
         title: 'Error',

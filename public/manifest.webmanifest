@@ -1,7 +1,7 @@
 {
   "name": "Ruthy31",
   "short_name": "Ruthy31",
-  "description": "Juego 31 enpara Ru",
+  "description": "Juego 31 para Ru",
   "display": "standalone",
   "orientation": "portrait",
   "scope": "./",
@@ -17,6 +17,24 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

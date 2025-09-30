@@ -1,6 +1,6 @@
 <div class="game-container" [class.waiting-turn]="!isYourTurn">
   <h2 class="game-title-enhanced">
-    <span class="title-number">3️⃣1️⃣</span>
+    <span class="title-number text-center">3️⃣1️⃣</span>
     <span class="room-code"> Sala: {{roomCode}}</span>
   </h2>
   
@@ -91,8 +91,8 @@
       <div *ngFor="let card of playerCards; let i = index" 
            class="card player-card" 
            [class.selected]="selectedCardIndex === i"
-           [class.card-entering]="cardAnimations[i]?.entering"
-           [class.card-leaving]="cardAnimations[i]?.leaving"
+           [class.card-entering]="cardAnimations[i] && cardAnimations[i].entering"
+           [class.card-leaving]="cardAnimations[i] && cardAnimations[i].leaving"
            (click)="selectCard(i)"
            [style.animation-delay]="i * 0.1 + 's'">
         <img [src]="getCardImagePath(card)" 
