@@ -13,9 +13,9 @@
   "version": "3.0",
   "icons": [
     {
-      "src": "gato-icon.svg",
+      "src": "icon.jpeg",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     },
     {
