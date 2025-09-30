@@ -9,7 +9,7 @@ if (!fs.existsSync(iconsDir)) {
 }
 
 // Limpiar iconos existentes
-const existingIcons = ['icon-192x192.png', 'icon-512x512.png', 'apple-touch-icon.png'];
+const existingIcons = ['icon-192x192.png', 'icon-512x512.png', 'apple-touch-icon.png', 'favicon-32x32.png'];
 existingIcons.forEach(icon => {
   const iconPath = path.join(iconsDir, icon);
   if (fs.existsSync(iconPath)) {
@@ -32,6 +32,7 @@ function createRoundedMask(size) {
 const inputPath = path.join(__dirname, 'public', 'icon.jpeg');
 
 const sizes = [
+  { name: 'favicon-32x32.png', size: 32 },
   { name: 'icon-192x192.png', size: 192 },
   { name: 'icon-512x512.png', size: 512 },
   { name: 'apple-touch-icon.png', size: 180 }
@@ -44,8 +45,9 @@ Promise.all(
     
     return sharp(inputPath)
       .resize(size, size, {
-        fit: 'cover',
-        position: 'center'
+        fit: 'contain',  // Cambiado de 'cover' a 'contain'
+        position: 'center',
+        background: { r: 255, g: 255, b: 255, alpha: 0 } // Fondo transparente
       })
       .composite([
         {
