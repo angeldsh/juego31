@@ -18,9 +18,11 @@ export class LobbyComponent implements OnInit, OnDestroy {
   currentRoom: any = null;
   gameStarted: boolean = false;
   selectedPlayer: string = '';
-  
+
   // Contador de días juntos
   daysTogetherCount: number = 0;
+  // Contador de días hasta Navidad (14 de diciembre a las 8:55 AM)
+  daysUntilChristmas: number = 0;
   private intervalId: any;
 
   // Opciones de jugadores
@@ -39,35 +41,53 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private roomService: RoomService) {}
-  
+  constructor(private roomService: RoomService) { }
+
   ngOnInit() {
     this.calculateDaysTogether();
+    this.calculateDaysUntilChristmas();
     // Actualizar cada minuto para mantener el contador actualizado
     this.intervalId = setInterval(() => {
       this.calculateDaysTogether();
+      this.calculateDaysUntilChristmas();
     }, 60000); // 60 segundos
   }
-  
+
   ngOnDestroy() {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
   }
-  
+
   private calculateDaysTogether() {
     const startDate = new Date('2025-04-06'); // 6 de abril de 2025
     const currentDate = new Date();
-    
+
     // Calcular la diferencia en milisegundos
     const timeDifference = currentDate.getTime() - startDate.getTime();
-    
+
     // Convertir a días (redondeando hacia abajo)
     this.daysTogetherCount = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-    
+
     // Si la fecha actual es anterior a la fecha de inicio, mostrar 0
     if (this.daysTogetherCount < 0) {
       this.daysTogetherCount = 0;
+    }
+  }
+
+  private calculateDaysUntilChristmas() {
+    const christmasDate = new Date('2025-12-14T08:55:00'); // 14 de diciembre de 2025 a las 8:55 AM
+    const currentDate = new Date();
+
+    // Calcular la diferencia en milisegundos
+    const timeDifference = christmasDate.getTime() - currentDate.getTime();
+
+    // Convertir a días (redondeando hacia abajo)
+    this.daysUntilChristmas = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+    // Si ya pasó la fecha, mostrar 0
+    if (this.daysUntilChristmas < 0) {
+      this.daysUntilChristmas = 0;
     }
   }
 
@@ -87,7 +107,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     try {
       const code = await this.roomService.createRoom(this.playerName);
       if (code) {
@@ -95,8 +115,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
         // Suscribirse directamente a la sala creada sin llamar joinRoom
         this.subscribeToRoom(code);
         this.gameStarted = true;
-        
-        
+
+
       } else {
         await Swal.fire({
           title: 'Error',
@@ -125,7 +145,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     try {
       const success = await this.roomService.joinRoom(this.roomCode, this.playerName);
       if (success) {
@@ -158,14 +178,14 @@ export class LobbyComponent implements OnInit, OnDestroy {
   onInputFocus() {
     // Agregar clase para manejar el estado de focus
     document.body.classList.add('input-focused');
-    
+
     // Scroll suave hacia el input en móviles
     if (window.innerWidth <= 768) {
       setTimeout(() => {
         const inputElement = document.querySelector('.mobile-input') as HTMLElement;
         if (inputElement) {
-          inputElement.scrollIntoView({ 
-            behavior: 'smooth', 
+          inputElement.scrollIntoView({
+            behavior: 'smooth',
             block: 'center',
             inline: 'nearest'
           });

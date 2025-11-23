@@ -24,7 +24,7 @@ export class GameComponent implements OnInit, OnDestroy {
   isYourTurn: boolean = false;
   drawnCard: string | null = null;
   selectedCardIndex: number = -1;
-  
+
   // Nuevas propiedades para animaciones
   cardAnimations: { [key: number]: { entering: boolean, leaving: boolean } } = {};
   showDrawnCardAnimation: boolean = false;
@@ -32,7 +32,7 @@ export class GameComponent implements OnInit, OnDestroy {
   showWinnerImage: boolean = false;
   isHandlingRoundEnd: boolean = false;
 
-  constructor(private roomService: RoomService) {}
+  constructor(private roomService: RoomService) { }
 
   ngOnInit() {
     this.updateState();
@@ -56,23 +56,23 @@ export class GameComponent implements OnInit, OnDestroy {
 
   updateState() {
     if (!this.room || !this.room.players) return;
-    
+
     const player = this.room.players.find((p: any) => p.name === this.playerName);
     if (player) {
       this.playerCards = player.cards || [];
       this.isYourTurn = (this.room.turn === this.playerName);
-      
+
       // Solo limpiar cartas si NO es tu turno Y NO estás en round_closing
       if (!this.isYourTurn && this.room.status !== 'round_closing') {
         this.drawnCard = null;
         this.selectedCardIndex = -1;
       }
-      
+
       // Detectar si la ronda ha terminado y mostrar resultados (SOLO UNA VEZ)
       if (this.room.status === 'waiting' && this.room.lastWinner && !this.showWinnerImage && !this.isHandlingRoundEnd) {
         this.handleRoundEnd();
       }
-      
+
       // Limpiar estado cuando se inicia nueva ronda
       if (this.room.status === 'playing' && !this.room.lastWinner) {
         this.drawnCard = null;
@@ -80,7 +80,7 @@ export class GameComponent implements OnInit, OnDestroy {
         this.showWinnerImage = false;
         this.isHandlingRoundEnd = false;
       }
-      
+
       // Manejar el final de ronda automáticamente
       if (this.room.status === 'round_closing' && this.isYourTurn) {
         console.log('Es tu último turno después de que el otro jugador se plantó');
@@ -90,16 +90,16 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async drawFromDeck() {
     if (!this.isYourTurn || this.drawnCard) return;
-    
+
     try {
       // Activar animación del mazo
       this.isDrawingFromDeck = true;
-      
+
       // Esperar un poco para la animación
       setTimeout(() => {
         this.isDrawingFromDeck = false;
       }, 600);
-      
+
       const newCard = await this.roomService.drawFromDeck(this.roomCode, this.playerName);
       if (newCard) {
         this.drawnCard = newCard;
@@ -116,7 +116,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async drawFromDiscard() {
     if (!this.isYourTurn || this.drawnCard || !this.canDrawFromDiscard()) return;
-    
+
     try {
       const newCard = await this.roomService.drawFromDiscard(this.roomCode, this.playerName);
       if (newCard) {
@@ -133,7 +133,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async keepCurrentCards() {
     if (!this.drawnCard) return;
-    
+
     try {
       const success = await this.roomService.discardDrawnCard(this.roomCode, this.playerName, this.drawnCard);
       if (success) {
@@ -152,30 +152,30 @@ export class GameComponent implements OnInit, OnDestroy {
 
   async confirmCardSwap() {
     if (this.selectedCardIndex === -1 || !this.drawnCard) return;
-    
+
     try {
       // Activar animación de salida para la carta seleccionada
       this.cardAnimations[this.selectedCardIndex] = { entering: false, leaving: true };
-      
+
       // Esperar la animación antes de hacer el cambio
       setTimeout(async () => {
         try {
           const success = await this.roomService.swapCard(
-            this.roomCode, 
-            this.playerName, 
-            this.selectedCardIndex, 
+            this.roomCode,
+            this.playerName,
+            this.selectedCardIndex,
             this.drawnCard!
           );
-          
+
           if (success) {
             // Activar animación de entrada para la nueva carta
             this.cardAnimations[this.selectedCardIndex] = { entering: true, leaving: false };
-            
+
             // Limpiar animaciones después de un tiempo
             setTimeout(() => {
               this.cardAnimations[this.selectedCardIndex] = { entering: false, leaving: false };
             }, 600);
-            
+
             this.drawnCard = null;
             this.selectedCardIndex = -1;
             this.showDrawnCardAnimation = false;
@@ -214,7 +214,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.selectedCardIndex = index;
   }
 
-  
+
 
 
   get canCloseRound(): boolean {
@@ -231,7 +231,7 @@ export class GameComponent implements OnInit, OnDestroy {
   calculateHandPoints(): number {
     // Agrupar cartas por palo
     const suitGroups: { [key: string]: number[] } = {};
-    
+
     for (const card of this.playerCards) {
       const suit = this.getCardSuit(card);
       const value = this.getCardNumericValue(card);
@@ -255,7 +255,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
   getCardNumericValue(card: string): number {
     const value = card.charAt(0);
-    switch(value) {
+    switch (value) {
       case '1': return 11; // As vale 11
       case 'S': return 10; // Sota
       case 'C': return 10; // Caballo
@@ -274,14 +274,14 @@ export class GameComponent implements OnInit, OnDestroy {
       });
       return;
     }
-    
+
     try {
       const points = this.calculateHandPoints();
       const success = await this.roomService.plantarse(this.roomCode, this.playerName);
-     if (success) {
-  await Swal.fire({
-    title: '🌟 ¡Plantado!',
-    html: `
+      if (success) {
+        await Swal.fire({
+          title: '🌟 ¡Plantado!',
+          html: `
       <div style="text-align: center; font-size: 16px;">
         <span style="color: #d4a017; font-weight: 700; font-size: 18px;">
           ${points} puntos
@@ -292,39 +292,39 @@ export class GameComponent implements OnInit, OnDestroy {
         </small>
       </div>
     `,
-    icon: 'success',
-    showConfirmButton: false,
-    timer: 2200,
-    timerProgressBar: true,
-    toast: true,
-    position: 'top',
-    background: '#fffbe6', // fondo amarillo claro
-    color: '#5a4a1f', // texto marrón suave
-    iconColor: '#f1c40f', // icono amarillo dorado
-    showClass: {
-      popup: 'animate__animated animate__fadeInDown animate__faster'
-    },
-    hideClass: {
-      popup: 'animate__animated animate__fadeOutUp animate__faster'
-    },
-    customClass: {
-      popup: 'swal-mobile-toast',
-      title: 'swal-mobile-title'
-    },
-    width: '280px',
-    padding: '14px',
-  });
-} else {
-  await Swal.fire({
-    title: '⚠️ Error',
-    text: 'Error al cerrar la ronda',
-    icon: 'error',
-    confirmButtonText: 'OK',
-    confirmButtonColor: '#f39c12', // botón naranja/amarillo
-    background: '#fffbe6',
-    color: '#5a4a1f'
-  });
-}
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 2200,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top',
+          background: '#fffbe6', // fondo amarillo claro
+          color: '#5a4a1f', // texto marrón suave
+          iconColor: '#f1c40f', // icono amarillo dorado
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown animate__faster'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp animate__faster'
+          },
+          customClass: {
+            popup: 'swal-mobile-toast',
+            title: 'swal-mobile-title'
+          },
+          width: '280px',
+          padding: '14px',
+        });
+      } else {
+        await Swal.fire({
+          title: '⚠️ Error',
+          text: 'Error al cerrar la ronda',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#f39c12', // botón naranja/amarillo
+          background: '#fffbe6',
+          color: '#5a4a1f'
+        });
+      }
 
     } catch (error) {
       await Swal.fire({
@@ -368,23 +368,23 @@ export class GameComponent implements OnInit, OnDestroy {
     'assets/z.jpeg',
     'assets/ñ.jpeg'
   ];
-  
+
   private lastUsedImageIndex: number = -1;
 
   // Función para obtener una imagen aleatoria sin repetir la anterior
   private getRandomCelebrationImage(): string {
     let randomIndex;
-    
+
     // Si solo hay una imagen, usarla
     if (this.celebrationImages.length === 1) {
       return this.celebrationImages[0];
     }
-    
+
     // Evitar repetir la misma imagen consecutivamente
     do {
       randomIndex = Math.floor(Math.random() * this.celebrationImages.length);
     } while (randomIndex === this.lastUsedImageIndex && this.celebrationImages.length > 1);
-    
+
     this.lastUsedImageIndex = randomIndex;
     return this.celebrationImages[randomIndex];
   }
@@ -392,36 +392,40 @@ export class GameComponent implements OnInit, OnDestroy {
   async handleRoundEnd() {
     // Evitar ejecuciones múltiples
     if (this.isHandlingRoundEnd || this.showWinnerImage) return;
-    
+
     if (this.room?.status === 'waiting' && this.room.lastWinner) {
       this.isHandlingRoundEnd = true;
-      
+
       const winner = this.room.lastWinner;
       const winnerPoints = this.room.lastWinnerPoints || 0;
       const loserPoints = this.room.lastLoserPoints || 0;
-      
+
       // Usar SOLO la imagen que viene del servidor (ya no generar localmente)
       this.winnerImageSrc = this.room.celebrationImage || 'assets/a.jpeg'; // fallback por seguridad
-      
+
       // Mantener los mensajes específicos del ganador
       if (winner === 'EMPATE') {
         this.winnerText = `¡Empate! Ambos con ${winnerPoints} puntos`;
       } else {
         this.winnerText = `¡${winner} ganó con ${winnerPoints} puntos!`;
       }
-      
+
       this.showWinnerImage = true;
-      
+
       // Después de 4 segundos ocultar la imagen Y REINICIAR AUTOMÁTICAMENTE
       setTimeout(async () => {
         this.showWinnerImage = false;
-        
+
         // REINICIAR AUTOMÁTICAMENTE LA NUEVA RONDA
+        // Solo el primer jugador (host) inicia la nueva ronda para evitar condiciones de carrera
+        // y duplicación de reinicios que causan problemas de sincronización
+        const isHost = this.room.players && this.room.players.length > 0 && this.room.players[0].name === this.playerName;
         const allPlayersAlive = this.room.players.every((player: any) => player.lives > 0);
-        if (allPlayersAlive) {
+
+        if (isHost && allPlayersAlive) {
           await this.roomService.startNewRound(this.roomCode);
         }
-        
+
         this.isHandlingRoundEnd = false;
       }, 4000);
     }
@@ -430,28 +434,28 @@ export class GameComponent implements OnInit, OnDestroy {
   // Nuevo método local para preparar ronda (evita contexto de inyección)
   async prepareNewRoundLocal() {
     if (!this.room) return;
-    
+
     // Solo preparar nueva ronda si todos los jugadores están vivos
     const allPlayersAlive = this.room.players.every((player: any) => player.lives > 0);
-    
+
     if (allPlayersAlive) {
       // Preparar nueva ronda localmente
       this.room.deck = this.roomService.generateDeck();
       this.room.discardPile = [];
-      
+
       this.room.players.forEach((player: any) => {
         player.cards = this.roomService.drawCards(this.room.deck, 3);
       });
-      
+
       // Agregar carta inicial al descarte
       if (this.room.deck.length > 0) {
         this.room.discardPile.push(this.room.deck.pop());
       }
-      
+
       // El primer jugador empieza la nueva ronda
       this.room.turn = this.room.players[0].name;
       this.room.status = 'playing';
-      
+
       // Actualizar la sala
       await this.roomService.updateRoom(this.room.code, this.room);
     }
@@ -462,7 +466,7 @@ export class GameComponent implements OnInit, OnDestroy {
   // Métodos auxiliares para mostrar las cartas
   getCardValue(card: string): string {
     const value = card.charAt(0);
-    switch(value) {
+    switch (value) {
       case 'S': return 'Sota';
       case 'C': return 'Caballo';
       case 'R': return 'Rey';
@@ -475,7 +479,7 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   getSuitSymbol(suit: string): string {
-    switch(suit) {
+    switch (suit) {
       case 'C': return '♥';
       case 'O': return '🔶';
       case 'E': return '♠';
@@ -488,7 +492,7 @@ export class GameComponent implements OnInit, OnDestroy {
   getCardImagePath(card: string): string {
     return `assets/cards/${card}.png`;
   }
-  
+
   // Método para obtener el nombre completo de la carta
   getCardDisplayName(card: string): string {
     const value = this.getCardValue(card);
@@ -496,10 +500,10 @@ export class GameComponent implements OnInit, OnDestroy {
     const suitName = this.getSuitName(suit);
     return `${value} de ${suitName}`;
   }
-  
+
   // Método para obtener el nombre del palo
   getSuitName(suit: string): string {
-    switch(suit) {
+    switch (suit) {
       case 'C': return 'Copas';
       case 'O': return 'Oros';
       case 'E': return 'Espadas';
@@ -507,7 +511,7 @@ export class GameComponent implements OnInit, OnDestroy {
       default: return suit;
     }
   }
-  
+
   // Método para manejar errores de carga de imagen
   onImageError(event: any, card: string): void {
     console.warn(`No se pudo cargar la imagen para la carta: ${card}`);
@@ -515,7 +519,7 @@ export class GameComponent implements OnInit, OnDestroy {
     const img = event.target;
     const cardElement = img.parentElement;
     const fallback = cardElement.querySelector('.card-fallback');
-    
+
     img.style.display = 'none';
     if (fallback) {
       fallback.style.display = 'flex';
@@ -529,28 +533,28 @@ export class GameComponent implements OnInit, OnDestroy {
     } else if (this.playerName === 'Lince') {
       return '🐱'; // Lince (usando gato como representación)
     }
-    
+
     // Iconos alternativos más específicos
     if (this.playerName.toLowerCase().includes('aguila') || this.playerName.toLowerCase().includes('águila')) {
       return '🦅';
     } else if (this.playerName.toLowerCase().includes('lince')) {
       return '🐾'; // Huellas de lince
     }
-    
+
     // Icono por defecto
     return '👤';
   }
 
 
-// Nueva función para obtener el oponente
-getOpponent() {
-  if (!this.room || !this.room.players || this.room.players.length < 2) {
-    return null;
+  // Nueva función para obtener el oponente
+  getOpponent() {
+    if (!this.room || !this.room.players || this.room.players.length < 2) {
+      return null;
+    }
+    return this.room.players.find((p: any) => p.name !== this.playerName);
   }
-  return this.room.players.find((p: any) => p.name !== this.playerName);
-}
 
- getOpponentLastAction(): OpponentAction | undefined {
+  getOpponentLastAction(): OpponentAction | undefined {
     const opponent = this.getOpponent();
     if (!opponent || !this.room) {
       return undefined;
@@ -569,7 +573,7 @@ getOpponent() {
       });
       return;
     }
-    
+
     try {
       const points = this.calculateHandPoints();
       const success = await this.roomService.plantarse(this.roomCode, this.playerName);

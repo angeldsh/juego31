@@ -84,7 +84,7 @@
 .days-number {
   font-size: 1.6em;
   color: #e91e63;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .days-label {
@@ -206,17 +206,20 @@
   margin: 20px 0;
 }
 
-.create-room, .join-room {
+.create-room,
+.join-room {
   margin: 20px 0;
 }
 
-.create-room h3, .join-room h3 {
+.create-room h3,
+.join-room h3 {
   color: #e17055;
   margin-bottom: 12px;
   font-size: 1.2em;
 }
 
-.btn-create, .btn-join {
+.btn-create,
+.btn-join {
   background: linear-gradient(45deg, #f39c12, #fdcb6e);
   color: white;
   border: none;
@@ -234,13 +237,15 @@
   min-width: 100px;
 }
 
-.btn-create:hover, .btn-join:hover {
+.btn-create:hover,
+.btn-join:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
   background: linear-gradient(45deg, #e67e22, #f1c40f);
 }
 
-.btn-create:active, .btn-join:active {
+.btn-create:active,
+.btn-join:active {
   transform: translateY(0);
 }
 
@@ -335,19 +340,24 @@
   0% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(1.2);
   }
+
   100% {
     transform: scale(1);
   }
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px);
     opacity: 0.7;
   }
+
   50% {
     transform: translateY(-10px);
     opacity: 1;
@@ -364,7 +374,7 @@
     align-items: flex-start;
     padding-top: 10px;
   }
-  
+
   .welcome-section {
     padding: 15px;
     margin: 0;
@@ -372,116 +382,119 @@
     max-height: 98vh;
     width: calc(100% - 10px);
   }
-  
+
   .game-title {
     font-size: 1.8em;
     margin: 10px 0 5px 0;
   }
-  
+
   .love-message {
     font-size: 0.9em;
     margin: 5px 0;
   }
-  
+
   .player-cards {
     flex-direction: column;
     align-items: center;
     gap: 10px;
     margin: 10px 0;
   }
-  
+
   .player-card {
     width: 100%;
     max-width: 200px;
     padding: 12px;
     min-width: auto;
   }
-  
+
   .player-emoji {
     font-size: 2em;
     margin-bottom: 5px;
   }
-  
+
   .player-name {
     font-size: 1em;
     margin-bottom: 3px;
   }
-  
+
   .player-description {
     font-size: 0.75em;
   }
-  
+
   .selection-title {
     font-size: 1.1em;
     margin-bottom: 10px;
   }
-  
-  .create-room h3, .join-room h3 {
+
+  .create-room h3,
+  .join-room h3 {
     font-size: 1.1em;
     margin-bottom: 10px;
   }
-  
-  .btn-create, .btn-join {
+
+  .btn-create,
+  .btn-join {
     padding: 10px 20px;
     font-size: 14px;
     width: 100%;
     justify-content: center;
   }
-  
+
   .join-room .input-group {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .romantic-input {
     padding: 10px 15px;
     font-size: 14px;
   }
-  
+
   .divider {
     margin: 15px 0;
   }
-  
+
   .actions-section {
     margin: 15px 0;
   }
-  
-  .create-room, .join-room {
+
+  .create-room,
+  .join-room {
     margin: 15px 0;
   }
-  
+
   .footer {
     margin-top: 15px;
   }
-  
+
   .footer p {
     font-size: 0.9em;
     margin: 5px 0;
   }
-  
+
   .floating-hearts {
     height: 25px;
     margin-top: 10px;
   }
-  
+
   .floating-heart {
     font-size: 16px;
   }
-  
+
   .days-counter {
     padding: 8px;
     margin: 8px 0;
     gap: 6px;
   }
-  
+
   .days-number {
     font-size: 1.4em;
   }
-  
+
   .days-label {
     font-size: 0.9em;
   }
-  
+
   .heart-animation {
     font-size: 1.1em;
   }
@@ -495,42 +508,43 @@
     align-items: flex-start;
     padding-top: 5px;
   }
-  
+
   .welcome-section {
     padding: 10px 15px;
     max-height: 98vh;
     overflow-y: auto;
   }
-  
+
   .game-title {
     font-size: 1.6em;
     margin: 5px 0;
   }
-  
+
   .player-cards {
     flex-direction: row;
     gap: 8px;
     margin: 8px 0;
   }
-  
+
   .player-card {
     padding: 8px;
     min-width: 80px;
   }
-  
+
   .player-emoji {
     font-size: 1.8em;
     margin-bottom: 3px;
   }
-  
+
   .actions-section {
     margin: 10px 0;
   }
-  
-  .create-room, .join-room {
+
+  .create-room,
+  .join-room {
     margin: 10px 0;
   }
-  
+
   .floating-hearts {
     display: none;
   }
@@ -542,15 +556,15 @@
     padding: 20px;
     max-width: 400px;
   }
-  
+
   .game-title {
     font-size: 2em;
   }
-  
+
   .player-cards {
     gap: 12px;
   }
-  
+
   .player-card {
     min-width: 110px;
     padding: 12px;
@@ -562,19 +576,21 @@
   .player-card:hover {
     transform: none;
   }
-  
+
   .player-card:active {
     transform: scale(0.98);
   }
-  
-  .btn-create:hover, .btn-join:hover {
+
+  .btn-create:hover,
+  .btn-join:hover {
     transform: none;
   }
-  
-  .btn-create:active, .btn-join:active {
+
+  .btn-create:active,
+  .btn-join:active {
     transform: scale(0.98);
   }
-  
+
   .days-counter-minimal:hover {
     transform: none;
   }
@@ -586,7 +602,8 @@
 }
 
 .mobile-input {
-  font-size: 16px !important; /* Evita zoom automático en iOS */
+  font-size: 16px !important;
+  /* Evita zoom automático en iOS */
   -webkit-appearance: none;
   appearance: none;
 }
@@ -605,28 +622,28 @@
     align-items: flex-start;
     padding-top: 20px;
   }
-  
+
   .welcome-section {
     max-height: none;
     margin-bottom: 20px;
     position: relative;
   }
-  
+
   /* Cuando el input está enfocado */
   .input-focused .lobby-container {
     padding-top: 10px;
   }
-  
+
   .input-focused .welcome-section {
     transform: translateY(-30px);
     transition: transform 0.3s ease;
   }
-  
+
   /* Ajuste específico para el área de unirse */
   .join-room {
     margin-bottom: 30px;
   }
-  
+
   .romantic-input {
     font-size: 16px !important;
     padding: 14px 18px;
@@ -639,9 +656,10 @@
   .input-focused .welcome-section {
     transform: translateY(-50px);
   }
-  
+
   .lobby-container {
-    padding: 10px 10px 100px 10px; /* Espacio extra abajo */
+    padding: 10px 10px 100px 10px;
+    /* Espacio extra abajo */
   }
 }
 
@@ -652,12 +670,12 @@
     min-height: 100vh;
     padding: 5px 10px 80px 10px;
   }
-  
+
   .welcome-section {
     padding: 15px;
     max-height: none;
   }
-  
+
   .input-focused .welcome-section {
     transform: translateY(-40px);
   }
@@ -689,10 +707,13 @@
 }
 
 @keyframes gentle-pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.8;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.05);
@@ -712,4 +733,85 @@
   font-size: 1.1em;
   font-weight: 600;
   color: #a6860b;
+}
+
+/* Estilos para la cuenta atrás con reloj de arena */
+.reunion-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 15px 0;
+}
+
+.countdown-special {
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #e67e22;
+  background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+  padding: 4px 12px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(253, 203, 110, 0.4);
+  margin: 0 6px;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.hourglass-animated {
+  font-size: 1.3em;
+  display: inline-block;
+  animation: rotate-hourglass 3s ease-in-out infinite;
+  margin-left: 4px;
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 3px 10px rgba(253, 203, 110, 0.4);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(253, 203, 110, 0.6);
+  }
+}
+
+@keyframes rotate-hourglass {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(0deg);
+  }
+
+  50% {
+    transform: rotate(180deg);
+  }
+
+  75% {
+    transform: rotate(180deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive para móviles */
+@media (max-width: 480px) {
+  .countdown-special {
+    font-size: 1.5em;
+    padding: 3px 10px;
+  }
+
+  .hourglass-animated {
+    font-size: 1.1em;
+  }
+
+  .reunion-countdown {
+    gap: 3px;
+  }
 }

@@ -8,7 +8,7 @@ import { Room, Player, OpponentAction } from '../types/types';
 })
 export class RoomService {
   suits = ['C', 'O', 'E', 'B'];
-  values = ['1','2','3','4','5','6','7','S','C','R'];
+  values = ['1', '2', '3', '4', '5', '6', '7', 'S', 'C', 'R'];
 
   // Agregar las imágenes de celebración al servicio
   private celebrationImages: string[] = [
@@ -46,13 +46,13 @@ export class RoomService {
     return this.celebrationImages[randomIndex];
   }
 
-  constructor(private db: Database) {}
+  constructor(private db: Database) { }
 
   async createRoom(playerName: string): Promise<string> {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
     const deck = this.generateDeck();
     const playerCards = this.drawCards(deck, 3);
-    
+
     const roomData: Room = {
       players: [
         { name: playerName, cards: playerCards, lives: 3 }
@@ -62,7 +62,7 @@ export class RoomService {
       turn: playerName,
       status: 'waiting'
     };
-    
+
     const roomRef = ref(this.db, `rooms/${code}`);
     await set(roomRef, roomData);
     return code;
@@ -71,26 +71,26 @@ export class RoomService {
   async joinRoom(code: string, playerName: string): Promise<boolean> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) {
       console.error('La sala no existe');
       return false;
     }
-    
+
     const roomData = snapshot.val() as Room;
-    
+
     // Validar que roomData y sus propiedades existan
     if (!roomData || !roomData.players || !Array.isArray(roomData.players)) {
       console.error('Datos de la sala inválidos:', roomData);
       return false;
     }
-    
+
     // Verificar si el jugador ya está en la sala
     if (roomData.players.some(player => player.name === playerName)) {
       console.error('El jugador ya está en la sala');
       return false;
     }
-    
+
     // Verificar que el deck existe y tiene cartas suficientes
     if (!roomData.deck || roomData.deck.length < 3) {
       console.error('No hay suficientes cartas en el deck');
@@ -113,17 +113,17 @@ export class RoomService {
     // Actualizar los datos de la sala
     roomData.players.push(newPlayer);
     roomData.status = 'playing';
-    
+
     // Asegurar que discardPile existe
     if (!roomData.discardPile) {
       roomData.discardPile = [];
     }
-    
+
     // Solo agregar carta al discardPile si el deck tiene cartas
     if (roomData.deck.length > 0) {
       roomData.discardPile.push(roomData.deck.pop()!);
     }
-    
+
     try {
       await set(roomRef, roomData);
       return true;
@@ -136,7 +136,7 @@ export class RoomService {
   subscribeToRoom(code: string): Observable<Room | null> {
     return new Observable(observer => {
       const roomRef = ref(this.db, `rooms/${code}`);
-      
+
       const unsubscribe = onValue(roomRef, (snapshot) => {
         if (snapshot.exists()) {
           observer.next(snapshot.val() as Room);
@@ -146,8 +146,8 @@ export class RoomService {
       }, (error) => {
         observer.error(error);
       });
-      
-      return () => off(roomRef, 'value', unsubscribe);
+
+      return () => unsubscribe();
     });
   }
 
@@ -155,7 +155,7 @@ export class RoomService {
     const deck = [];
     for (let s of this.suits) {
       for (let v of this.values) {
-        deck.push(v+s);
+        deck.push(v + s);
       }
     }
     return deck.sort(() => Math.random() - 0.5);
@@ -163,12 +163,12 @@ export class RoomService {
 
   drawCards(deck: string[], count: number): string[] {
     const cards: string[] = [];
-    
+
     for (let i = 0; i < count && deck.length > 0; i++) {
       const randomIndex = Math.floor(Math.random() * deck.length);
       cards.push(deck.splice(randomIndex, 1)[0]); // Remover del deck original
     }
-    
+
     return cards;
   }
 
@@ -180,14 +180,14 @@ export class RoomService {
   async changeTurn(code: string, currentPlayerName: string): Promise<string> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return currentPlayerName;
-    
+
     const roomData = snapshot.val() as Room;
     const currentIndex = roomData.players.findIndex(p => p.name === currentPlayerName);
     const nextIndex = (currentIndex + 1) % roomData.players.length;
     roomData.turn = roomData.players[nextIndex].name;
-    
+
     await this.updateRoom(code, roomData);
     return roomData.turn;
   }
@@ -195,26 +195,26 @@ export class RoomService {
   async drawFromDeck(code: string, playerName: string): Promise<string | null> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return null;
-    
+
     const roomData = snapshot.val() as Room;
-    
+
     // Verificar que hay cartas en el deck
     if (!roomData.deck || roomData.deck.length === 0) {
       console.error('No hay cartas en el deck');
       return null;
     }
-    
+
     // Robar carta del deck
     const drawnCard = roomData.deck.pop()!;
-    
+
     // Trackear acción del oponente
     this.trackOpponentAction(roomData, playerName, {
       type: 'draw_deck',
       timestamp: Date.now()
     });
-    
+
     await this.updateRoom(code, roomData);
     return drawnCard;
   }
@@ -222,27 +222,27 @@ export class RoomService {
   async drawFromDiscard(code: string, playerName: string): Promise<string | null> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return null;
-    
+
     const roomData = snapshot.val() as Room;
-    
+
     // Verificar que hay cartas en el descarte
     if (!roomData.discardPile || roomData.discardPile.length === 0) {
       console.error('No hay cartas en el descarte');
       return null;
     }
-    
+
     // Robar la última carta del descarte
     const drawnCard = roomData.discardPile.pop()!;
-    
+
     // Trackear acción del oponente
     this.trackOpponentAction(roomData, playerName, {
       type: 'draw_discard',
       cardDrawn: drawnCard,
       timestamp: Date.now()
     });
-    
+
     await this.updateRoom(code, roomData);
     return drawnCard;
   }
@@ -250,24 +250,24 @@ export class RoomService {
   async swapCard(code: string, playerName: string, cardIndex: number, newCard: string): Promise<boolean> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return false;
-    
+
     const roomData = snapshot.val() as Room;
     const player = roomData.players.find(p => p.name === playerName);
-    
+
     if (!player || !player.cards || cardIndex >= player.cards.length) return false;
-    
+
     // Inicializar discardPile si no existe
     if (!roomData.discardPile) {
       roomData.discardPile = [];
     }
-    
+
     // Intercambiar cartas
     const oldCard = player.cards[cardIndex];
     roomData.discardPile.push(oldCard);
     player.cards[cardIndex] = newCard;
-    
+
     // Trackear acción del oponente
     this.trackOpponentAction(roomData, playerName, {
       type: 'swap',
@@ -275,10 +275,10 @@ export class RoomService {
       cardSwapped: newCard,
       timestamp: Date.now()
     });
-    
-    // Verificar si es el final de ronda
-    const isRoundClosing = roomData.status === 'round_closing';
-    
+
+    // Verificar si es el final de ronda (Checking closingPlayer adds robustness)
+    const isRoundClosing = roomData.status === 'round_closing' || !!roomData.closingPlayer;
+
     if (isRoundClosing) {
       // Finalizar la ronda inmediatamente
       const result = await this.finishRoundInternal(roomData);
@@ -289,7 +289,7 @@ export class RoomService {
       const currentIndex = roomData.players.findIndex(p => p.name === playerName);
       const nextIndex = (currentIndex + 1) % roomData.players.length;
       roomData.turn = roomData.players[nextIndex].name;
-      
+
       await this.updateRoom(code, roomData);
       return true;
     }
@@ -298,29 +298,29 @@ export class RoomService {
   async discardDrawnCard(code: string, playerName: string, cardToDiscard: string): Promise<boolean> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return false;
-    
+
     const roomData = snapshot.val() as Room;
-    
+
     // Inicializar discardPile si no existe
     if (!roomData.discardPile) {
       roomData.discardPile = [];
     }
-    
+
     // Agregar la carta al descarte
     roomData.discardPile.push(cardToDiscard);
-    
+
     // Trackear acción del oponente
     this.trackOpponentAction(roomData, playerName, {
       type: 'discard',
       cardDiscarded: cardToDiscard,
       timestamp: Date.now()
     });
-    
-    // Verificar si es el final de ronda
-    const isRoundClosing = roomData.status === 'round_closing';
-    
+
+    // Verificar si es el final de ronda (Checking closingPlayer adds robustness)
+    const isRoundClosing = roomData.status === 'round_closing' || !!roomData.closingPlayer;
+
     if (isRoundClosing) {
       // Finalizar la ronda inmediatamente
       const result = await this.finishRoundInternal(roomData);
@@ -331,7 +331,7 @@ export class RoomService {
       const currentIndex = roomData.players.findIndex(p => p.name === playerName);
       const nextIndex = (currentIndex + 1) % roomData.players.length;
       roomData.turn = roomData.players[nextIndex].name;
-      
+
       await this.updateRoom(code, roomData);
       return true;
     }
@@ -343,22 +343,19 @@ export class RoomService {
     if (!roomData.opponentActions) {
       roomData.opponentActions = {};
     }
-    
+
     // Inicializar array para el jugador si no existe
     if (!roomData.opponentActions[playerName]) {
       roomData.opponentActions[playerName] = [];
     }
-    
+
     // Añadir la acción
     roomData.opponentActions[playerName].push(action);
-    
+
     // Mantener solo las últimas 5 acciones para no sobrecargar
     if (roomData.opponentActions[playerName].length > 5) {
       roomData.opponentActions[playerName] = roomData.opponentActions[playerName].slice(-5);
     }
-    
-    // Eliminar esta línea que causaba el problema global:
-    // roomData.lastAction = action;
   }
 
   // Función para obtener la última acción del oponente específico
@@ -381,26 +378,31 @@ export class RoomService {
   async plantarse(code: string, playerName: string): Promise<boolean> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return false;
-    
+
     const roomData = snapshot.val() as Room;
-    
+
+    // Verificar si ya se está cerrando la ronda para evitar inconsistencias
+    if (roomData.status === 'round_closing' || roomData.closingPlayer) {
+      return false;
+    }
+
     // Trackear acción del oponente
     this.trackOpponentAction(roomData, playerName, {
       type: 'discard',
       timestamp: Date.now()
     });
-    
+
     // Cambiar turno al oponente para que tenga su último turno
     const currentIndex = roomData.players.findIndex(p => p.name === playerName);
     const nextIndex = (currentIndex + 1) % roomData.players.length;
     roomData.turn = roomData.players[nextIndex].name;
-    
+
     // Cambiar el estado a round_closing DESPUÉS del cambio de turno
     roomData.status = 'round_closing';
     roomData.closingPlayer = playerName;
-    
+
     await this.updateRoom(code, roomData);
     return true;
   }
@@ -409,34 +411,34 @@ export class RoomService {
   async finishRound(code: string): Promise<any> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return null;
-    
+
     const roomData = snapshot.val() as Room;
     const result = this.finishRoundInternal(roomData);
-    
+
     if (result) {
       // Actualizar el estado con los resultados
       await this.updateRoom(code, roomData);
     }
-    
+
     return result;
   }
 
   // Hacer público el método finishRoundInternal
   finishRoundInternal(roomData: Room): { winner: string, winnerPoints: number, loserPoints: number, isTie: boolean } | null {
     if (roomData.players.length !== 2) return null;
-    
+
     // Calcular puntos de ambos jugadores
     const player1 = roomData.players[0];
     const player2 = roomData.players[1];
-    
+
     const points1 = this.calculatePlayerPoints(player1.cards);
     const points2 = this.calculatePlayerPoints(player2.cards);
-    
+
     // Generar imagen de celebración única para ambos jugadores
     const celebrationImage = this.getRandomCelebrationImage();
-    
+
     // Verificar empate
     if (points1 === points2) {
       // En caso de empate, nadie pierde vidas
@@ -445,9 +447,9 @@ export class RoomService {
       roomData.lastWinnerPoints = points1;
       roomData.lastLoserPoints = points2;
       roomData.celebrationImage = celebrationImage;
-      
+
       delete roomData.closingPlayer;
-      
+
       return {
         winner: 'EMPATE',
         winnerPoints: points1,
@@ -455,7 +457,7 @@ export class RoomService {
         isTie: true
       };
     }
-    
+
     // Determinar ganador (MAYOR puntuación gana en el juego 31)
     let winner: Player, loser: Player;
     if (points1 > points2) {  // Cambiar < por >
@@ -465,19 +467,19 @@ export class RoomService {
       winner = player2;
       loser = player1;
     }
-    
+
     // El perdedor pierde una vida
     loser.lives--;
-    
+
     // Actualizar estado de la sala
     roomData.status = loser.lives > 0 ? 'waiting' : 'finished';
     roomData.lastWinner = winner.name;
     roomData.lastWinnerPoints = this.calculatePlayerPoints(winner.cards);
     roomData.lastLoserPoints = this.calculatePlayerPoints(loser.cards);
     roomData.celebrationImage = celebrationImage;
-    
+
     delete roomData.closingPlayer;
-    
+
     return {
       winner: winner.name,
       winnerPoints: this.calculatePlayerPoints(winner.cards),
@@ -486,23 +488,21 @@ export class RoomService {
     };
   }
 
- 
-
   // Agrupar cartas por palo (como en el componente)
   private calculatePlayerPoints(cards: string[]): number {
     const suitGroups: { [key: string]: number[] } = {};
-    
+
     for (const card of cards) {
       const suit = card.charAt(card.length - 1); // Último carácter es el palo
       const value = card.charAt(0);
       let numericValue: number;
-      
-      switch(value) {
+
+      switch (value) {
         case '1': numericValue = 11; break; // As vale 11
         case 'S': case 'C': case 'R': numericValue = 10; break; // Figuras valen 10
         default: numericValue = parseInt(value); break; // Números 2-7
       }
-      
+
       if (!suitGroups[suit]) {
         suitGroups[suit] = [];
       }
@@ -521,29 +521,31 @@ export class RoomService {
     return maxPoints;
   }
 
-  // Add this new method before the closing brace
   async startNewRound(code: string): Promise<boolean> {
     const roomRef = ref(this.db, `rooms/${code}`);
     const snapshot = await get(roomRef);
-    
+
     if (!snapshot.exists()) return false;
-    
+
     const roomData = snapshot.val() as Room;
-    
+
     // Reset room for new round
     const newDeck = this.generateDeck();
-    
+
     // Deal new cards to all players
     roomData.players.forEach(player => {
       player.cards = this.drawCards(newDeck, 3);
     });
-    
+
     // Set up discard pile
     roomData.discardPile = [this.drawCards(newDeck, 1)[0]];
     roomData.deck = newDeck;
     roomData.status = 'playing';
-    roomData.turn = roomData.players[0].name; // First player starts
-    
+
+    // Randomize starting turn
+    const randomPlayerIndex = Math.floor(Math.random() * roomData.players.length);
+    roomData.turn = roomData.players[randomPlayerIndex].name;
+
     // Clear round-specific data
     delete roomData.closingPlayer;
     delete roomData.lastWinner;
@@ -552,7 +554,7 @@ export class RoomService {
     delete roomData.celebrationImage;
     delete roomData.opponentActions; // Limpiar todas las acciones del oponente
     delete roomData.lastAction; // Limpiar la última acción también
-    
+
     await this.updateRoom(code, roomData);
     return true;
   }
