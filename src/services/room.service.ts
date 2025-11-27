@@ -55,7 +55,7 @@ export class RoomService {
 
     const roomData: Room = {
       players: [
-        { name: playerName, cards: playerCards, lives: 3 }
+        { name: playerName, cards: playerCards, lives: 3, sessionWins: 0 }
       ],
       deck,
       discardPile: [],
@@ -107,7 +107,8 @@ export class RoomService {
     const newPlayer: Player = {
       name: playerName,
       cards: playerCards,
-      lives: 3
+      lives: 3,
+      sessionWins: 0
     };
 
     // Actualizar los datos de la sala
@@ -480,6 +481,10 @@ export class RoomService {
 
     delete roomData.closingPlayer;
 
+    // Incrementar contador de victorias de sesión
+    if (!winner.sessionWins) winner.sessionWins = 0;
+    winner.sessionWins++;
+
     return {
       winner: winner.name,
       winnerPoints: this.calculatePlayerPoints(winner.cards),
@@ -554,6 +559,9 @@ export class RoomService {
     delete roomData.celebrationImage;
     delete roomData.opponentActions; // Limpiar todas las acciones del oponente
     delete roomData.lastAction; // Limpiar la última acción también
+
+    // SAFETY: Ensure closingPlayer is absolutely removed
+    if (roomData.closingPlayer) delete roomData.closingPlayer;
 
     await this.updateRoom(code, roomData);
     return true;

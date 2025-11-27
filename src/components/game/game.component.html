@@ -1,24 +1,25 @@
 <div class="game-container" [class.waiting-turn]="!isYourTurn">
   <h2 class="game-title-enhanced">
     <span class="title-number text-center">3️⃣1️⃣</span>
-    <span class="room-code"> Sala: {{roomCode}}</span>
+    <div class="header-info">
+      <span class="room-code"> Sala: {{roomCode}}</span>
+      <span class="session-score" *ngIf="getSessionScore()">🏆 {{getSessionScore()}}</span>
+    </div>
   </h2>
-  
+
   <!-- Componente para mostrar acciones del oponente (solo si hay 2 jugadores) -->
-  <app-opponent-actions 
-    *ngIf="room?.players?.length === 2 && getOpponent()"
-    [opponentName]="getOpponent()?.name || ''"
-    [opponentCards]="getOpponent()?.cards || []"
-    [lastAction]="getOpponentLastAction()"
-    [isOpponentTurn]="!isYourTurn">
+  <app-opponent-actions *ngIf="room?.players?.length === 2 && getOpponent()" [opponentName]="getOpponent()?.name || ''"
+    [opponentCards]="getOpponent()?.cards || []" [lastAction]="getOpponentLastAction()" [isOpponentTurn]="!isYourTurn">
   </app-opponent-actions>
-  
+
   <!-- Información del jugador -->
   <div class="player-info">
     <p *ngIf="isYourTurn && room?.status !== 'round_closing'" class="turn-indicator">🎯 Es tu turno</p>
-    <p *ngIf="isYourTurn && room?.status === 'round_closing'" class="last-turn-indicator">⚡ ¡ÚLTIMA RONDA! Es tu turno final</p>
+    <p *ngIf="isYourTurn && room?.status === 'round_closing'" class="last-turn-indicator">⚡ ¡ÚLTIMA RONDA! Es tu turno
+      final</p>
     <p *ngIf="!isYourTurn && room?.status !== 'round_closing'" class="waiting">⏳ Esperando turno...</p>
-    <p *ngIf="!isYourTurn && room?.status === 'round_closing'" class="you-closed">✅ Te plantaste - El otro jugador tiene un turno más</p>
+    <p *ngIf="!isYourTurn && room?.status === 'round_closing'" class="you-closed">✅ Te plantaste - El otro jugador tiene
+      un turno más</p>
   </div>
 
   <!-- Mesa de juego - Mazo y Descarte en fila -->
@@ -30,9 +31,7 @@
         <div class="deck-stack">
           <div class="deck-card deck-card-1"></div>
           <div class="deck-card deck-card-2"></div>
-          <div class="deck-card deck-card-3" 
-               [class.deck-drawing]="isDrawingFromDeck"
-               (click)="drawFromDeck()">
+          <div class="deck-card deck-card-3" [class.deck-drawing]="isDrawingFromDeck" (click)="drawFromDeck()">
             <img src="/assets/cards/RV.png" alt="Mazo" class="card-image">
           </div>
         </div>
@@ -43,14 +42,10 @@
       <div class="discard-area">
         <h3>Descarte</h3>
         <div class="discard-stack" *ngIf="room.discardPile && room.discardPile.length > 0">
-          <div *ngFor="let card of room.discardPile.slice(-1)" 
-               class="card discard-card"
-               [class.discard-glow]="canDrawFromDiscard()"
-               (click)="drawFromDiscard()">
-            <img [src]="getCardImagePath(card)" 
-                 [alt]="getCardDisplayName(card)"
-                 class="card-image"
-                 (error)="onImageError($event, card)">
+          <div *ngFor="let card of room.discardPile.slice(-1)" class="card discard-card"
+            [class.discard-glow]="canDrawFromDiscard()" (click)="drawFromDiscard()">
+            <img [src]="getCardImagePath(card)" [alt]="getCardDisplayName(card)" class="card-image"
+              (error)="onImageError($event, card)">
           </div>
         </div>
         <div class="empty-discard" *ngIf="!room.discardPile || room.discardPile.length === 0">
@@ -64,10 +59,8 @@
       <h4>Robada:</h4>
       <div class="drawn-card-container">
         <div class="card drawn-card" [class.card-flip-in]="showDrawnCardAnimation">
-          <img [src]="getCardImagePath(drawnCard)" 
-               [alt]="getCardDisplayName(drawnCard)"
-               class="card-image"
-               (error)="onImageError($event, drawnCard)">
+          <img [src]="getCardImagePath(drawnCard)" [alt]="getCardDisplayName(drawnCard)" class="card-image"
+            (error)="onImageError($event, drawnCard)">
           <div class="card-fallback" style="display: none;">
             <div class="card-value">{{getCardValue(drawnCard)}}</div>
             <div class="card-suit" [ngClass]="'suit-' + getCardSuit(drawnCard)">
@@ -88,17 +81,13 @@
       </h4>
     </div>
     <div class="cards-container">
-      <div *ngFor="let card of playerCards; let i = index" 
-           class="card player-card" 
-           [class.selected]="selectedCardIndex === i"
-           [class.card-entering]="cardAnimations[i] && cardAnimations[i].entering"
-           [class.card-leaving]="cardAnimations[i] && cardAnimations[i].leaving"
-           (click)="selectCard(i)"
-           [style.animation-delay]="i * 0.1 + 's'">
-        <img [src]="getCardImagePath(card)" 
-             [alt]="getCardDisplayName(card)"
-             class="card-image"
-             (error)="onImageError($event, card)">
+      <div *ngFor="let card of playerCards; let i = index" class="card player-card"
+        [class.selected]="selectedCardIndex === i"
+        [class.card-entering]="cardAnimations[i] && cardAnimations[i].entering"
+        [class.card-leaving]="cardAnimations[i] && cardAnimations[i].leaving" (click)="selectCard(i)"
+        [style.animation-delay]="i * 0.1 + 's'">
+        <img [src]="getCardImagePath(card)" [alt]="getCardDisplayName(card)" class="card-image"
+          (error)="onImageError($event, card)">
         <div class="card-fallback" style="display: none;">
           <div class="card-value">{{getCardValue(card)}}</div>
           <div class="card-suit" [ngClass]="'suit-' + getCardSuit(card)">
@@ -111,27 +100,23 @@
 
   <!-- Acciones del juego -->
   <div class="game-actions">
- 
-    
-       <ng-container *ngIf="drawnCard">
-      <button class="btn btn-swap action-btn" 
-              [disabled]="selectedCardIndex === -1 || !isYourTurn" 
-              (click)="confirmCardSwap()">
+
+
+    <ng-container *ngIf="drawnCard">
+      <button class="btn btn-swap action-btn" [disabled]="selectedCardIndex === -1 || !isYourTurn"
+        (click)="confirmCardSwap()">
         <span class="btn-icon">🔄</span>
         <span class="btn-text">Cambiar</span>
       </button>
-      <button class="btn btn-pass action-btn" 
-              [disabled]="!isYourTurn"
-              (click)="keepCurrentCards()">
+      <button class="btn btn-pass action-btn" [disabled]="!isYourTurn" (click)="keepCurrentCards()">
         <span class="btn-icon">👋</span>
         <span class="btn-text">Pasar</span>
       </button>
     </ng-container>
 
     <!-- Solo mostrar botón cerrar si tiene 21+ puntos -->
-    <button *ngIf="calculateHandPoints() >= 21 && isYourTurn && !drawnCard && room.status !== 'round_closing'" 
-            class="btn btn-close action-btn" 
-            (click)="closeRound()">
+    <button *ngIf="calculateHandPoints() >= 21 && isYourTurn && !drawnCard && room.status !== 'round_closing'"
+      class="btn btn-close action-btn" (click)="closeRound()">
       <span class="btn-icon">🎯</span>
       <span class="btn-text">¡Cerrar!</span>
     </button>

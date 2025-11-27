@@ -563,6 +563,21 @@ export class GameComponent implements OnInit, OnDestroy {
     return action || undefined; // Convierte null a undefined
   }
 
+  getSessionScore(): string {
+    if (!this.room || !this.room.players || this.room.players.length < 2) {
+      return '';
+    }
+
+    // Asumimos que es un juego de 2 jugadores
+    const p1 = this.room.players[0];
+    const p2 = this.room.players[1];
+
+    const score1 = p1.sessionWins || 0;
+    const score2 = p2.sessionWins || 0;
+
+    return `${score1} - ${score2}`;
+  }
+
   async plantarse() {
     if (!this.isYourTurn) {
       await Swal.fire({
