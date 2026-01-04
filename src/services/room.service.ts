@@ -475,6 +475,7 @@ export class RoomService {
     // Actualizar estado de la sala
     roomData.status = 'waiting';
     roomData.lastWinner = winner.name;
+    roomData.lastLoser = loser.name; // Guardar el perdedor para que empiece la siguiente ronda
     roomData.lastWinnerPoints = this.calculatePlayerPoints(winner.cards);
     roomData.lastLoserPoints = this.calculatePlayerPoints(loser.cards);
     roomData.celebrationImage = celebrationImage;
@@ -547,13 +548,19 @@ export class RoomService {
     roomData.deck = newDeck;
     roomData.status = 'playing';
 
-    // Randomize starting turn
-    const randomPlayerIndex = Math.floor(Math.random() * roomData.players.length);
-    roomData.turn = roomData.players[randomPlayerIndex].name;
+    // Determinar quién empieza: el perdedor de la ronda anterior
+    // Si no hay perdedor (primera ronda o empate), aleatorio
+    if (roomData.lastLoser) {
+      roomData.turn = roomData.lastLoser;
+    } else {
+      const randomPlayerIndex = Math.floor(Math.random() * roomData.players.length);
+      roomData.turn = roomData.players[randomPlayerIndex].name;
+    }
 
     // Clear round-specific data
     delete roomData.closingPlayer;
     delete roomData.lastWinner;
+    delete roomData.lastLoser; // Limpiar también el perdedor
     delete roomData.lastWinnerPoints;
     delete roomData.lastLoserPoints;
     delete roomData.celebrationImage;

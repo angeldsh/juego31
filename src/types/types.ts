@@ -21,6 +21,7 @@ export interface Room {
   status: 'waiting' | 'playing' | 'finished' | 'round_closing';
   closingPlayer?: string;
   lastWinner?: string;
+  lastLoser?: string; // Nuevo campo para guardar el perdedor
   lastWinnerPoints?: number;
   lastLoserPoints?: number;
   celebrationImage?: string; // Nueva propiedad para la imagen de celebración
