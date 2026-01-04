@@ -76,7 +76,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
 
   private calculateDaysUntilChristmas() {
-    const christmasDate = new Date('2025-12-07T10:00:00'); // 7 de diciembre de 2025 a las 8:55 AM
+    const christmasDate = new Date('2026-03-18T21:00:00'); // El viaje a EEUU
     const currentDate = new Date();
 
     // Calcular la diferencia en milisegundos

@@ -469,11 +469,11 @@ export class RoomService {
       loser = player1;
     }
 
-    // El perdedor pierde una vida
-    loser.lives--;
+    // MODO INFINITO: No restamos vidas y siempre volvemos a 'waiting'
+    // loser.lives--; 
 
     // Actualizar estado de la sala
-    roomData.status = loser.lives > 0 ? 'waiting' : 'finished';
+    roomData.status = 'waiting';
     roomData.lastWinner = winner.name;
     roomData.lastWinnerPoints = this.calculatePlayerPoints(winner.cards);
     roomData.lastLoserPoints = this.calculatePlayerPoints(loser.cards);

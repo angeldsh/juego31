@@ -398,7 +398,7 @@ export class GameComponent implements OnInit, OnDestroy {
 
       const winner = this.room.lastWinner;
       const winnerPoints = this.room.lastWinnerPoints || 0;
-      const loserPoints = this.room.lastLoserPoints || 0;
+      // const loserPoints = this.room.lastLoserPoints || 0;
 
       // Usar SOLO la imagen que viene del servidor (ya no generar localmente)
       this.winnerImageSrc = this.room.celebrationImage || 'assets/a.jpeg'; // fallback por seguridad
@@ -418,12 +418,10 @@ export class GameComponent implements OnInit, OnDestroy {
 
         // REINICIAR AUTOMÁTICAMENTE LA NUEVA RONDA
         // Solo el primer jugador (host) inicia la nueva ronda para evitar condiciones de carrera
-        // y duplicación de reinicios que causan problemas de sincronización
         const isHost = this.room.players && this.room.players.length > 0 && this.room.players[0].name === this.playerName;
-        const allPlayersAlive = this.room.players.every((player: any) => player.lives > 0);
-
-        if (isHost && allPlayersAlive) {
-          await this.roomService.startNewRound(this.roomCode);
+        
+        if (isHost) {
+           await this.roomService.startNewRound(this.roomCode);
         }
 
         this.isHandlingRoundEnd = false;
@@ -435,30 +433,25 @@ export class GameComponent implements OnInit, OnDestroy {
   async prepareNewRoundLocal() {
     if (!this.room) return;
 
-    // Solo preparar nueva ronda si todos los jugadores están vivos
-    const allPlayersAlive = this.room.players.every((player: any) => player.lives > 0);
+    // Preparar nueva ronda localmente
+    this.room.deck = this.roomService.generateDeck();
+    this.room.discardPile = [];
 
-    if (allPlayersAlive) {
-      // Preparar nueva ronda localmente
-      this.room.deck = this.roomService.generateDeck();
-      this.room.discardPile = [];
+    this.room.players.forEach((player: any) => {
+      player.cards = this.roomService.drawCards(this.room.deck, 3);
+    });
 
-      this.room.players.forEach((player: any) => {
-        player.cards = this.roomService.drawCards(this.room.deck, 3);
-      });
-
-      // Agregar carta inicial al descarte
-      if (this.room.deck.length > 0) {
-        this.room.discardPile.push(this.room.deck.pop());
-      }
-
-      // El primer jugador empieza la nueva ronda
-      this.room.turn = this.room.players[0].name;
-      this.room.status = 'playing';
-
-      // Actualizar la sala
-      await this.roomService.updateRoom(this.room.code, this.room);
+    // Agregar carta inicial al descarte
+    if (this.room.deck.length > 0) {
+      this.room.discardPile.push(this.room.deck.pop());
     }
+
+    // El primer jugador empieza la nueva ronda
+    this.room.turn = this.room.players[0].name;
+    this.room.status = 'playing';
+
+    // Actualizar la sala
+    await this.roomService.updateRoom(this.room.code, this.room);
   }
 
 
