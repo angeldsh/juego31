@@ -60,18 +60,19 @@
 
 .card-mini {
   position: relative;
-  width: 40px;
-  height: 56px;
+  width: 50px;
+  height: 70px;
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
+  background-color: white;
 }
 
 .card-mini-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .card-back {
@@ -152,8 +153,8 @@
   }
   
   .card-mini {
-    width: 35px;
-    height: 49px;
+    width: 45px;
+    height: 63px;
   }
   
   .opponent-name {

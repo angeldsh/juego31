@@ -3,6 +3,10 @@ export interface Player {
   cards: string[];
   lives: number;
   sessionWins?: number;
+  // Propiedades específicas de Ventanita
+  ventanitaCards?: string[]; // Las 4 cartas del jugador
+  visibleCards?: boolean[]; // Estado de visibilidad de las 4 cartas (true = boca arriba)
+  ventanitaWins?: number; // Rondas ganadas en ventanita
 }
 
 export interface OpponentAction {
@@ -19,6 +23,7 @@ export interface Room {
   discardPile: string[];
   turn: string;
   status: 'waiting' | 'playing' | 'finished' | 'round_closing';
+  gameType: '31' | 'ventanita'; // Nuevo campo para el tipo de juego
   closingPlayer?: string;
   lastWinner?: string;
   lastLoser?: string; // Nuevo campo para guardar el perdedor

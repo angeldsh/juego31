@@ -1,0 +1,122 @@
+<div class="game-container" [class.waiting-turn]="!isYourTurn">
+  <h2 class="game-title-enhanced">
+    <span class="title-number text-center">🪟 Ventanita</span>
+    <div class="header-info">
+      <span class="room-code"> Sala: {{roomCode}}</span>
+      <span class="session-score" *ngIf="getSessionScore()">🏆 {{getSessionScore()}}</span>
+    </div>
+  </h2>
+
+  <!-- Componente para mostrar acciones del oponente -->
+  <app-opponent-actions *ngIf="room?.players?.length === 2 && getOpponent()" [opponentName]="getOpponent()?.name || ''"
+    [opponentCards]="getOpponent()?.ventanitaCards || []" 
+    [opponentVisibleCards]="getOpponent()?.visibleCards || []"
+    [lastAction]="getOpponentLastAction()" 
+    [isOpponentTurn]="!isYourTurn">
+  </app-opponent-actions>
+
+  <!-- Información del jugador -->
+  <div class="player-info">
+    <p *ngIf="room?.status === 'waiting'" class="waiting">🏁 Ronda terminada. Preparando siguiente...</p>
+    <p *ngIf="isYourTurn && room?.status !== 'round_closing' && room?.status !== 'waiting'" class="turn-indicator">🎯 Es tu turno</p>
+    <p *ngIf="isYourTurn && room?.status === 'round_closing'" class="last-turn-indicator">⚡ ¡ÚLTIMA RONDA! Es tu turno
+      final</p>
+    <p *ngIf="!isYourTurn && room?.status !== 'round_closing' && room?.status !== 'waiting'" class="waiting">⏳ Esperando turno...</p>
+    <p *ngIf="!isYourTurn && room?.status === 'round_closing'" class="you-closed">✅ Te plantaste - El otro jugador tiene
+      un turno más</p>
+  </div>
+
+  <!-- Mesa de juego - Mazo y Descarte en fila -->
+  <div class="game-table">
+    <div class="deck-discard-row">
+      <!-- Mazo boca abajo -->
+      <div class="deck-area mr-3">
+        <h3>Mazo</h3>
+        <div class="deck-stack">
+          <div class="deck-card deck-card-1"></div>
+          <div class="deck-card deck-card-2"></div>
+          <div class="deck-card deck-card-3" [class.deck-drawing]="isDrawingFromDeck" (click)="drawFromDeck()">
+            <img src="assets/cards/RV.png" alt="Mazo" class="card-image">
+          </div>
+        </div>
+        <p class="deck-count">{{getDeckCount()}} cartas</p>
+      </div>
+
+      <!-- Pila de descarte -->
+      <div class="discard-area">
+        <h3>Descarte</h3>
+        <div class="discard-stack" *ngIf="room?.discardPile && room.discardPile.length > 0">
+          <div *ngFor="let card of room.discardPile.slice(-1)" class="card discard-card"
+            [class.discard-glow]="canDrawFromDiscard()" (click)="drawFromDiscard()">
+            <img [src]="getCardImagePath(card)" [alt]="getCardDisplayName(card)" class="card-image"
+              (error)="onImageError($event, card)">
+          </div>
+        </div>
+        <div class="empty-discard" *ngIf="!room?.discardPile || room.discardPile.length === 0">
+          <div class="empty-pile">Vacío</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Carta robada debajo del mazo y descarte -->
+    <div *ngIf="drawnCard" class="drawn-card-area">
+      <h4>Robada:</h4>
+      <div class="drawn-card-container">
+        <div class="card drawn-card" [class.card-flip-in]="showDrawnCardAnimation">
+          <img [src]="getCardImagePath(drawnCard)" [alt]="getCardDisplayName(drawnCard)" class="card-image"
+            (error)="onImageError($event, drawnCard)">
+          <div class="card-fallback" style="display: none;">
+            <div class="card-value">{{getCardValue(drawnCard)}}</div>
+            <div class="card-suit" [ngClass]="'suit-' + getCardSuit(drawnCard)">
+              {{getSuitSymbol(getCardSuit(drawnCard))}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cartas del jugador (Modo Ventanita) -->
+  <div class="player-hand ventanita-hand">
+    <div class="player-hand-header">
+      <h4 class="player-score-header">
+        <span class="player-icon">{{ getPlayerIcon() }}</span>
+        <span class="score-text">Tus cartas (Ventanita)</span>
+      </h4>
+    </div>
+    <div class="cards-container ventanita-grid">
+      <div *ngFor="let card of ventanitaCards; let i = index" class="card player-card"
+        [class.card-entering]="cardAnimations[i] && cardAnimations[i].entering"
+        [class.card-leaving]="cardAnimations[i] && cardAnimations[i].leaving" 
+        (click)="swapVentanitaCard(i)"
+        [style.animation-delay]="i * 0.1 + 's'">
+        <img [src]="getVentanitaCardImage(i)" alt="Carta Ventanita" class="card-image">
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones del juego -->
+  <div class="game-actions">
+    <!-- Acciones Ventanita -->
+      <button *ngIf="drawnCard" class="btn btn-discard action-btn" [disabled]="!isYourTurn"
+        (click)="discardVentanitaDrawnCard()">
+        <span class="btn-icon">🗑️</span>
+        <span class="btn-text">Descartar</span>
+      </button>
+
+      <!-- Botón cerrar para Ventanita -->
+      <button *ngIf="!drawnCard && isYourTurn && room?.status !== 'round_closing'"
+        class="btn btn-close action-btn" (click)="plantarseVentanita()">
+        <span class="btn-icon">🛑</span>
+        <span class="btn-text">¡Cerrar!</span>
+      </button>
+  </div>
+</div>
+
+<!-- Overlay para mostrar imagen del ganador -->
+<div *ngIf="showWinnerImage" class="winner-overlay">
+  <div class="winner-content">
+    <img [src]="winnerImageSrc" [alt]="winnerText" class="winner-image">
+    <h2 class="winner-text">{{ winnerText }}</h2>
+  </div>
+</div>

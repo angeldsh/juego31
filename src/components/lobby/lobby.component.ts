@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RoomService } from '../../services/room.service';
+import { VentanitaRoomService } from '../../services/ventanita-room.service';
 import { GameComponent } from '../game/game.component';
+import { VentanitaGameComponent } from '../ventanita-game/ventanita-game.component';
+import { Room } from '../../types/types';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
@@ -9,7 +12,7 @@ import Swal from 'sweetalert2';
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
   styleUrls: ['./lobby.component.css'],
-  imports: [GameComponent, FormsModule, CommonModule],
+  imports: [GameComponent, VentanitaGameComponent, FormsModule, CommonModule],
   standalone: true
 })
 export class LobbyComponent implements OnInit, OnDestroy {
@@ -18,6 +21,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   currentRoom: any = null;
   gameStarted: boolean = false;
   selectedPlayer: string = '';
+  selectedGame: '31' | 'ventanita' = '31';
 
   // Contador de días juntos
   daysTogetherCount: number = 0;
@@ -41,7 +45,26 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private roomService: RoomService) { }
+  // Opciones de juego
+  gameOptions = [
+    {
+      id: '31',
+      name: '31',
+      emoji: '🃏',
+      description: 'El clásico'
+    },
+    {
+      id: 'ventanita',
+      name: 'Ventanita',
+      emoji: '🪟',
+      description: 'Golf / 4 cartas'
+    }
+  ];
+
+  constructor(
+    private roomService: RoomService,
+    private ventanitaRoomService: VentanitaRoomService
+  ) { }
 
   ngOnInit() {
     this.calculateDaysTogether();
@@ -97,6 +120,13 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.playerName = this.playerOptions.find(p => p.id === playerId)?.name || '';
   }
 
+  // Método para seleccionar juego
+  selectGame(gameId: string) {
+    if (gameId === '31' || gameId === 'ventanita') {
+      this.selectedGame = gameId;
+    }
+  }
+
   async createRoom() {
     if (!this.selectedPlayer) {
       await Swal.fire({
@@ -109,14 +139,18 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const code = await this.roomService.createRoom(this.playerName);
+      let code: string;
+      if (this.selectedGame === 'ventanita') {
+        code = await this.ventanitaRoomService.createRoom(this.playerName);
+      } else {
+        code = await this.roomService.createRoom(this.playerName);
+      }
+      
       if (code) {
         this.roomCode = code;
         // Suscribirse directamente a la sala creada sin llamar joinRoom
         this.subscribeToRoom(code);
         this.gameStarted = true;
-
-
       } else {
         await Swal.fire({
           title: 'Error',
@@ -147,7 +181,13 @@ export class LobbyComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const success = await this.roomService.joinRoom(this.roomCode, this.playerName);
+      let success: boolean;
+      if (this.selectedGame === 'ventanita') {
+        success = await this.ventanitaRoomService.joinRoom(this.roomCode, this.playerName);
+      } else {
+        success = await this.roomService.joinRoom(this.roomCode, this.playerName);
+      }
+
       if (success) {
         this.subscribeToRoom(this.roomCode);
         this.gameStarted = true;
@@ -171,9 +211,15 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   // Método para suscribirse a los cambios de la sala
   private subscribeToRoom(code: string) {
-    this.roomService.subscribeToRoom(code).subscribe(room => {
-      this.currentRoom = room;
-    });
+    if (this.selectedGame === 'ventanita') {
+      this.ventanitaRoomService.subscribeToRoom(code).subscribe(room => {
+        this.currentRoom = room;
+      });
+    } else {
+      this.roomService.subscribeToRoom(code).subscribe(room => {
+        this.currentRoom = room;
+      });
+    }
   }
   onInputFocus() {
     // Agregar clase para manejar el estado de focus

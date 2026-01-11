@@ -51,16 +51,21 @@ export class RoomService {
   async createRoom(playerName: string): Promise<string> {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
     const deck = this.generateDeck();
-    const playerCards = this.drawCards(deck, 3);
+
+    const player: Player = {
+      name: playerName,
+      cards: this.drawCards(deck, 3),
+      lives: 3,
+      sessionWins: 0
+    };
 
     const roomData: Room = {
-      players: [
-        { name: playerName, cards: playerCards, lives: 3, sessionWins: 0 }
-      ],
+      players: [player],
       deck,
       discardPile: [],
       turn: playerName,
-      status: 'waiting'
+      status: 'waiting',
+      gameType: '31'
     };
 
     const roomRef = ref(this.db, `rooms/${code}`);

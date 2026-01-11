@@ -16,9 +16,11 @@
            class="card-mini"
            [class.card-changed]="lastAction?.type === 'swap' && i === 0"
            [class.card-new]="lastAction?.type === 'draw_deck' || lastAction?.type === 'draw_discard'">
-        <!-- Mostrar dorso de las cartas del oponente -->
+        <!-- Mostrar dorso o carta visible -->
         <div class="card-back">
-          <img src="/assets/cards/RV.png" alt="Carta oculta" class="card-mini-image">
+          <img [src]="opponentVisibleCards[i] ? getCardImagePath(card) : '/assets/cards/RV.png'" 
+               [alt]="opponentVisibleCards[i] ? 'Carta visible' : 'Carta oculta'" 
+               class="card-mini-image">
         </div>
         
         <!-- Indicador de carta cambiada -->

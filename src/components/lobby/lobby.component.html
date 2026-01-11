@@ -1,11 +1,5 @@
 <div class="lobby-container">
   <div *ngIf="!currentRoom" class="welcome-section">
-    <!-- Header romántico -->
-    <div class="romantic-header">
-      <h1 class="game-title">31</h1>
-
-    </div>
-
     <!-- Selección de jugador -->
     <div class="player-selection">
       <h3 class="selection-title">Elige tu jugador</h3>
@@ -15,6 +9,19 @@
           <div class="player-emoji">{{ player.emoji }}</div>
           <div class="player-name">{{ player.name }}</div>
           <div class="player-description">{{ player.description }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selección de juego -->
+    <div class="game-selection">
+      <h3 class="selection-title">Elige el juego</h3>
+      <div class="player-cards"> <!-- Reutilizamos estilos de player-cards -->
+        <div *ngFor="let game of gameOptions" class="player-card" [class.selected]="selectedGame === game.id"
+          (click)="selectGame(game.id)">
+          <div class="player-emoji">{{ game.emoji }}</div>
+          <div class="player-name">{{ game.name }}</div>
+          <div class="player-description">{{ game.description }}</div>
         </div>
       </div>
     </div>
@@ -60,6 +67,11 @@
   </div>
 
   <div *ngIf="currentRoom">
-    <app-game [room]="currentRoom" [playerName]="playerName" [roomCode]="roomCode"></app-game>
+    <ng-container *ngIf="currentRoom.gameType === 'ventanita'; else game31">
+      <app-ventanita-game [room]="currentRoom" [playerName]="playerName" [roomCode]="roomCode"></app-ventanita-game>
+    </ng-container>
+    <ng-template #game31>
+      <app-game [room]="currentRoom" [playerName]="playerName" [roomCode]="roomCode"></app-game>
+    </ng-template>
   </div>
 </div>

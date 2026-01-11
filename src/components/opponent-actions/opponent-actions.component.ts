@@ -12,6 +12,7 @@ import { OpponentAction } from '../../types/types';
 export class OpponentActionsComponent implements OnInit {
   @Input() opponentName: string = '';
   @Input() opponentCards: string[] = [];
+  @Input() opponentVisibleCards: boolean[] = [];
   @Input() lastAction?: OpponentAction;
   @Input() isOpponentTurn: boolean = false;
 
